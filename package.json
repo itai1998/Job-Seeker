@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/byu-oit-training/I-Tai-technical-challenge#readme",
   "dependencies": {
-    "axios": "^1.2.1"
+    "aws-sdk": "^2.1277.0",
+    "axios": "^1.2.1",
+    "enquirer": "^2.3.6",
+    "pg": "^8.8.0"
   }
 }
