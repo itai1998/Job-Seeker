@@ -42,10 +42,12 @@ const token = index.token
 //Params for SQL Code
 const params ={
     host: 'localhost',
-    user: null,
+    user:null,
+    //user: 'itai1998',
     //user:process.env.user,
+    password:null,
     //password: process.env.password,
-    password: null,
+    //password: 'Ether750609',
     database: 'pgdb',
     port: 5432
 }
@@ -150,6 +152,7 @@ async function jobOpening(){
         for(let i=0; i<job.length; i++){
             console.log('Side ID: '+job[i].site_id +'-'+ job[i].site_description)
         }
+        side = await getInput.input('Enter the side ID to see the job opening: ')
 
     } catch(e){
         console.log('An error occured in printing job 1opening API')
@@ -164,61 +167,82 @@ async function jobDetail(){
         const jobList = body.data.job_families
         console.log('')
         if(jobList.length ===0){
-            console.log('Sorry, no job available for this department so far. Please try other departments.')
-            reader.close()
+            console.log('Sorry, no job available for this department right now. Please try other departments.')
+            side = null
         }else {
             for (let i = 0; i < jobList.length; i++) {
                 console.log('Title ID: ' + jobList[i].job_template_id + ' --' + jobList[i].job_title)
             }
         }
+
+        if(side != null){
+            title = await getInput.input('Enter the title ID: ')
+        } else{
+            title = null
+        }
+
     }catch(e){
         console.error(e)
     }
 }
 
 async function jobChoice(){
-    try{
-        let t = await axios(jobOpeningApi)
-        const test = t.data.job_families
-        for (let i = 0; i < test.length; i++) {
-            if(Number(title) === test[i].job_template_id){
-                search = test[i].job_title
-                break
+    if(side!=null){
+        try{
+            let body = await axios(jobOpeningApi)
+            const jobTitle = body.data.job_families
+            for (let i = 0; i < jobTitle.length; i++) {
+                if(Number(title) === jobTitle[i].job_template_id){
+                    search = jobTitle[i].job_title
+                    break
+                }
             }
-        }
 
-        jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/'+ side+'/job_families/' +title+ '/job_postings'
-        let body = await axios(jobOpeningApi)
-        const jobList = body.data.job_openings
+            jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/'+ side+'/job_families/' +title+ '/job_postings'
+            body = await axios(jobOpeningApi)
+            const jobList = body.data.job_openings
 
-        for(let i=0; i<jobList.length; i++){
-            console.log('Opening ID: ' +jobList[i].opening_id + ' --'+jobList[i].posting_title)
-            prompt.choices.push(jobList[i].posting_title)
+            if(jobList.length===0){
+                console.log('Sorry, the position is not available right now. Please try other departments.')
+                title = null
+            }else{
+                for(let i=0; i<jobList.length; i++){
+                    console.log('Opening ID: ' +jobList[i].opening_id + ' --'+jobList[i].posting_title)
+                    prompt.choices.push(jobList[i].posting_title)
+                }
+            }
+
+
+        }catch(e){
+            console.error(e)
+            console.log('no')
+
         }
-    }catch(e){
-        console.log(e)
     }
+
 }
 
 
 function select(){
-    prompt.run()
-        .then(answer => console.log('Cope the url to see more detail: https://www.byu.edu/search-all?q='
-            +answer.replaceAll(' ','%20')+ ' \nor \nsearch '
-            + '\"' + search + '\"'
-            + ' at https://hrms.byu.edu/psc/ps/PUBLIC/HRMS/c/HRS_HRAM.HRS_APP_SCHJOB.GBL?Page=HRS_APP_SCHJOB&Action=U'))
-        .catch(console.error)
+    if(side !=null && title != null){
+        prompt.run()
+            .then(answer => console.log('Cope the url to see more detail: https://www.byu.edu/search-all?q='
+                +answer.replaceAll(' ','%20')+ ' \nor \nsearch '
+                + '\"' + search + '\"'
+                + ' at https://hrms.byu.edu/psc/ps/PUBLIC/HRMS/c/HRS_HRAM.HRS_APP_SCHJOB.GBL?Page=HRS_APP_SCHJOB&Action=U'))
+            .catch(console.error)
+    }
+
 }
 
 async function all(){
     await jobOpening()
-    side = await getInput.input('Enter the side ID to see the job opening: ')
+    // side = await getInput.input('Enter the side ID to see the job opening: ')
     await jobDetail()
-    title = await getInput.input('Enter the title ID: ')
+    // title = await getInput.input('Enter the title ID: ')
     await jobChoice()
     console.log(' ')
     select()
-
     //badInput()
 
 }
