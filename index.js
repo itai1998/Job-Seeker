@@ -36,7 +36,8 @@ const axios = require('axios')
 const { Client } = require('pg')
 const { Select } = require('enquirer')
 const getInput = require('./input')
-
+const index = require('./token')
+const token = index.token
 
 //Params for SQL Code
 const params ={
@@ -51,7 +52,7 @@ const params ={
 
 // Select enquirer
 const prompt = new Select({
-    name: 'color',
+    name: 'jobPrefer',
     message: 'Select the job you are interested in',
     choices: []
 })
@@ -83,7 +84,7 @@ const options = {
     url: 'https://api-sandbox.byu.edu:443/byuapi/persons/v3/452999669',
     method: 'GET',
     headers: {
-        'Authorization' : 'Bearer ziFs7_nK4bkx8oojD3kNcXJaLRI6If_qGsZsGuf-DVw.--BLoarsoXu8Hc0PUD5TNi3_0eC6nuiiF62u21nGmfQ'
+        'Authorization' : `Bearer ${token}`
     }
 }
 
@@ -92,7 +93,7 @@ const jobOpeningApi = {
     url: 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites',
     method: 'GET',
     headers: {
-        'Authorization' : 'Bearer ziFs7_nK4bkx8oojD3kNcXJaLRI6If_qGsZsGuf-DVw.--BLoarsoXu8Hc0PUD5TNi3_0eC6nuiiF62u21nGmfQ'
+        'Authorization' : `Bearer ${token}`
     }
 }
 
@@ -134,9 +135,8 @@ async function main(){
     }
 }
 
-
 /****************My Code*************************/
-let side, test
+let side, title, search
 
 // show the list of departments with its job opening name
 async function jobOpening(){
@@ -178,12 +178,21 @@ async function jobDetail(){
 
 async function jobChoice(){
     try{
-        jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/'+ side+'/job_families/' +test+ '/job_postings'
+        let t = await axios(jobOpeningApi)
+        const test = t.data.job_families
+        for (let i = 0; i < test.length; i++) {
+            if(Number(title) === test[i].job_template_id){
+                search = test[i].job_title
+                break
+            }
+        }
+
+        jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/'+ side+'/job_families/' +title+ '/job_postings'
         let body = await axios(jobOpeningApi)
         const jobList = body.data.job_openings
 
         for(let i=0; i<jobList.length; i++){
-            //console.log('Opening ID: ' +jobList[i].opening_id + ' --'+jobList[i].posting_title)
+            console.log('Opening ID: ' +jobList[i].opening_id + ' --'+jobList[i].posting_title)
             prompt.choices.push(jobList[i].posting_title)
         }
     }catch(e){
@@ -194,17 +203,20 @@ async function jobChoice(){
 
 function select(){
     prompt.run()
-        .then(answer => console.log('Cope the url to see more detail: https://www.byu.edu/search-all?q='+answer.replaceAll(' ','%20')))
+        .then(answer => console.log('Cope the url to see more detail: https://www.byu.edu/search-all?q='
+            +answer.replaceAll(' ','%20')+ ' \nor \nsearch '
+            + '\"' + search + '\"'
+            + ' at https://hrms.byu.edu/psc/ps/PUBLIC/HRMS/c/HRS_HRAM.HRS_APP_SCHJOB.GBL?Page=HRS_APP_SCHJOB&Action=U'))
         .catch(console.error)
 }
-
 
 async function all(){
     await jobOpening()
     side = await getInput.input('Enter the side ID to see the job opening: ')
     await jobDetail()
-    test = await getInput.input('Enter the title ID: ')
+    title = await getInput.input('Enter the title ID: ')
     await jobChoice()
+    console.log(' ')
     select()
 
     //badInput()
