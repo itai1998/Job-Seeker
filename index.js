@@ -11,12 +11,15 @@ const passwordParam = {
     Name: '/I-Tai-technical-challenge/dev/database_password',
     WithDecryption: true
 }
+
 ssm.getParameter(passwordParam).promise()
     .then(data => {
         const credential = data.Parameter.Value
-        //console.log(credential)
         password=credential
-    })
+        })
+
+
+
 
 // Set username from AWS
 const usernameParam ={
@@ -142,26 +145,29 @@ let side, title, search
 
 // show the list of departments with its job opening name
 async function jobOpening(){
-    try{
-        // get list of department
-        let body = await axios(jobOpeningApi)
-        const job = body.data.sites
-        console.log('Here are the departments that have job opening:')
-        console.log('Enter the Side ID to see detail information ')
-        console.log(' ')
-        for(let i=0; i<job.length; i++){
-            console.log('Side ID: '+job[i].site_id +'-'+ job[i].site_description)
-        }
-        side = await getInput.input('Enter the side ID to see the job opening: ')
+        try{
+            // get list of department
+            let body = await axios(jobOpeningApi)
+            const job = body.data.sites
+            console.log('Here are the departments that have job opening:')
+            console.log('Enter the Side ID to see detail information ')
+            console.log(' ')
+            for(let i=0; i<job.length; i++){
+                console.log('Side ID: '+job[i].site_id +'-'+ job[i].site_description)
+            }
 
-    } catch(e){
-        console.log('An error occured in printing job 1opening API')
-        throw e
-    }
+
+        } catch(e){
+            console.log('An error occured in printing job 1opening API')
+        }
+
+
+
 }
 
 async function jobDetail(){
     try{
+        side = await getInput.input('Enter the side ID to see the job opening: ')
         jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/' +side+ '/job_families'
         let body = await axios(jobOpeningApi)
         const jobList = body.data.job_families
@@ -237,9 +243,7 @@ function select(){
 
 async function all(){
     await jobOpening()
-    // side = await getInput.input('Enter the side ID to see the job opening: ')
     await jobDetail()
-    // title = await getInput.input('Enter the title ID: ')
     await jobChoice()
     console.log(' ')
     select()
@@ -254,6 +258,8 @@ all()
 //*******************Test if the code connect to the SQL********/
 // async function testDatabaseConnectivity (){
 //     try{
+//         params.user = username
+//         params.password = password
 //         console.log('Testing connection to local database')
 //         const client = new Client(params)
 //         await client.connect()
@@ -265,5 +271,5 @@ all()
 //         throw e
 //     }
 // }
-//
-// testDatabaseConnectivity()
+
+//testDatabaseConnectivity()
