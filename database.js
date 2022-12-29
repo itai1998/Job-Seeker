@@ -2,14 +2,18 @@ const { Client } = require('pg')
 const a = require('./input')
 const input = a.input
 
+const aws = require('./aws')
+
 
 const params ={
     host: 'localhost',
-    user:'itai1998',
-    password:'Ether750609',
+    user:null,
+    password:null,
     database: 'pgdb',
     port: 5432
 }
+
+console.log(params.user)
 
 // Test if the code connects to the database
 async function testDatabaseConnectivity (){
@@ -132,7 +136,7 @@ async function deleteAll(byuId){
 //deleteAll(452999660)
 //createToTable()
 //addToTable(452999669,'ITAI','Web Designer', 'EIS', 1002)
-seeTable(452999669)
+//seeTable(452999669)
 //delete_db(452999660)
 //testDatabaseConnectivity()
 module.exports = {testDatabaseConnectivity, createToTable, addToTable, seeTable, delete_db, deleteAll}
