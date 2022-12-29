@@ -228,7 +228,6 @@ async function jobChoice(){
 
 }
 
-
 function select(){
     if(side !=null && title != null){
         prompt.run()
