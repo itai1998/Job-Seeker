@@ -27,13 +27,13 @@ async function testDatabaseConnectivity (){
 }
 
 // Add the data to the database
-async function addToTable (id, byu_id, name, desire_job, job_id){
+async function addToTable (byu_id, name, desire_job, job_department,job_id){
     try{
         console.log('Adding something to the table...')
         const client = new Client(params)
         await client.connect()
-        const queryText = 'INSERT INTO job (ID, BYU_ID, NAME, DESIRE_JOB, JOB_ID) VALUES ($1, $2, $3, $4, $5)'
-        const values =[id, byu_id, name, desire_job, job_id]
+        const queryText = 'INSERT INTO job (BYU_ID, NAME, DESIRE_JOB, JOB_DEPARTMENT, JOB_ID) VALUES ($1, $2, $3, $4, $5)'
+        const values =[byu_id, name, desire_job, job_department, job_id]
         await client.query(queryText, values)
         await client.end()
         console.error('Successfully added a new item on the local database')
@@ -45,45 +45,56 @@ async function addToTable (id, byu_id, name, desire_job, job_id){
 }
 
 // create a new table (for testing right now)
-async function createToTable(params){
+async function createToTable(){
     try{
         const client = new Client(params)
         await client.connect()
         const queryText =
-            'CREATE TABLE Job ' +
-            '(id VARCHAR(50) PRIMARY KEY,' +
-            'byu_id VARCHAR(50) NOT NULL,' +
+            'CREATE TABLE job ' +
+            '(byu_id VARCHAR(9) NOT NULL,' +
             'name VARCHAR(9) NOT NULL,' +
             'desire_job VARCHAR(50) NOT NULL,' +
-            'job_id VARCHAR(50) NOT NULL);'
+            'job_department VARCHAR(50),' +
+            'job_id int NOT NULL);'
         await client.query(queryText)
         await client.end()
-        console.log('Successfully added')
+        console.log('Successfully created table')
     } catch(e) {
         console.log(e)
     }
 }
 
 // show the table
-async function seeTable(params) {
+async function seeTable(byuId) {
     try{
         const client = new Client(params)
         await client.connect()
-        const queryText = 'SELECT * FROM job;'
+        const queryText = `SELECT * FROM job WHERE byu_id = '${byuId}';`
         let a = await client.query(queryText)
         await client.end()
         a = a.rows
-        console.log(a)
+        if(a.length === 0){
+            console.log('You do not have any prefer job')
+        }else{
+            console.log(a)
+            return false
+        }
     } catch (e){
-        console.log(e)
+        if(e){
+            console.log(`Table doesn't exist yet. Creating table...`)
+            await createToTable()
+        }
+        console.log('Successfully created table! Please go back to the main menu!')
+        return false
+
     }
 }
 
-async function delete_db(params){
+async function delete_db(byu_id){
     await testDatabaseConnectivity()
     while(true){
         try{
-            await seeTable(params)
+            await seeTable(byu_id)
             let idToDelete
             idToDelete = await input(`What ID would you like to delete? if you don't, please enter 'n' >>> `)
             if(idToDelete === 'n' || idToDelete === 'N'){
@@ -91,11 +102,10 @@ async function delete_db(params){
             }else{
                 const client = new Client(params)
                 await client.connect()
-                const queryText = `DELETE FROM job WHERE id = '${idToDelete}'`
+                const queryText = `DELETE FROM job WHERE byu_id = '${byu_id}' AND job_id = '${idToDelete}';`
                 await client.query(queryText)
                 await client.end()
                 console.log('Successfully delete the prefer job')
-                break
             }
         } catch (e){
             console.error('Unable to delete the prefer job')
@@ -104,9 +114,25 @@ async function delete_db(params){
     }
 }
 
-//createToTable(params)
-//addToTable(2075946,452999669, 'ITAI', 'Software engineer', 1011)
-//seeTable(params)
-//delete_db(params)
+async function deleteAll(byuId){
+    try{
+        console.log('Deleting history...')
+        const client = new Client(params)
+        await client.connect()
+        const queryText = `DELETE FROM job WHERE byu_id = '${byuId}';`
+        await client.query(queryText)
+        await client.end()
+        console.log('Successfully delete all the history')
+    }catch (e){
+        console.log('Unable to delete item. Please ty again later.')
+        throw e
+    }
+}
 
-module.exports = {testDatabaseConnectivity, createToTable, addToTable, seeTable, delete_db}
+//deleteAll(452999660)
+//createToTable()
+//addToTable(452999669,'ITAI','Web Designer', 'EIS', 1002)
+seeTable(452999669)
+//delete_db(452999660)
+//testDatabaseConnectivity()
+module.exports = {testDatabaseConnectivity, createToTable, addToTable, seeTable, delete_db, deleteAll}

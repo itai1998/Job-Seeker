@@ -155,14 +155,9 @@ async function jobOpening(){
             for(let i=0; i<job.length; i++){
                 console.log('Side ID: '+job[i].site_id +'-'+ job[i].site_description)
             }
-
-
         } catch(e){
             console.log('An error occured in printing job 1opening API')
         }
-
-
-
 }
 
 async function jobDetail(){
@@ -237,7 +232,6 @@ function select(){
                 + ' at https://hrms.byu.edu/psc/ps/PUBLIC/HRMS/c/HRS_HRAM.HRS_APP_SCHJOB.GBL?Page=HRS_APP_SCHJOB&Action=U'))
             .catch(console.error)
     }
-
 }
 
 async function all(){
