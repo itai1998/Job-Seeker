@@ -2,22 +2,22 @@ const { Client } = require('pg')
 const a = require('./input')
 const input = a.input
 
-const aws = require('./aws')
-
+const {aws_name, aws_password} = require("./aws");
 
 const params ={
     host: 'localhost',
-    user:null,
+    user: null,
     password:null,
     database: 'pgdb',
     port: 5432
 }
 
-console.log(params.user)
 
 // Test if the code connects to the database
 async function testDatabaseConnectivity (){
     try{
+        params.user = await aws_name.then(i=>i.Value)
+        params.password = await aws_password.then(i=>i.Value)
         console.log('Testing connection to local database')
         const client = new Client(params)
         await client.connect()
@@ -33,6 +33,8 @@ async function testDatabaseConnectivity (){
 // Add the data to the database
 async function addToTable (byu_id, name, desire_job, job_department,job_id){
     try{
+        params.user = await aws_name.then(i=>i.Value)
+        params.password = await aws_password.then(i=>i.Value)
         console.log('Adding something to the table...')
         const client = new Client(params)
         await client.connect()
@@ -51,6 +53,8 @@ async function addToTable (byu_id, name, desire_job, job_department,job_id){
 // create a new table (for testing right now)
 async function createToTable(){
     try{
+        params.user = await aws_name.then(i=>i.Value)
+        params.password = await aws_password.then(i=>i.Value)
         const client = new Client(params)
         await client.connect()
         const queryText =
@@ -71,6 +75,8 @@ async function createToTable(){
 // show the table
 async function seeTable(byuId) {
     try{
+        params.user = await aws_name.then(i=>i.Value)
+        params.password = await aws_password.then(i=>i.Value)
         const client = new Client(params)
         await client.connect()
         const queryText = `SELECT * FROM job WHERE byu_id = '${byuId}';`
@@ -98,6 +104,8 @@ async function delete_db(byu_id){
     await testDatabaseConnectivity()
     while(true){
         try{
+            params.user = await aws_name.then(i=>i.Value)
+            params.password = await aws_password.then(i=>i.Value)
             await seeTable(byu_id)
             let idToDelete
             idToDelete = await input(`What ID would you like to delete? if you don't, please enter 'n' >>> `)
@@ -120,6 +128,8 @@ async function delete_db(byu_id){
 
 async function deleteAll(byuId){
     try{
+        params.user = await aws_name.then(i=>i.Value)
+        params.password = await aws_password.then(i=>i.Value)
         console.log('Deleting history...')
         const client = new Client(params)
         await client.connect()
@@ -137,6 +147,6 @@ async function deleteAll(byuId){
 //createToTable()
 //addToTable(452999669,'ITAI','Web Designer', 'EIS', 1002)
 //seeTable(452999669)
-//delete_db(452999660)
+//delete_db(452999669)
 //testDatabaseConnectivity()
 module.exports = {testDatabaseConnectivity, createToTable, addToTable, seeTable, delete_db, deleteAll}

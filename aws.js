@@ -22,6 +22,12 @@ aws_password = aws_password.then(message=>{
     return message.Parameter
 })
 
+
+async function test(){
+    let x = await aws_name
+    console.log(x.Value)
+}
+
 exports.aws_name = aws_name
 exports.aws_password = aws_password
 
