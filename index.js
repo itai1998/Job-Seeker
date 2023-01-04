@@ -82,6 +82,7 @@ async function showDepartment(){
                 console.log('Side ID: '+job[i].site_id +'-'+ job[i].site_description)
             }
             side = await input('Enter the side ID to see the job opening: ')
+
         } catch(e){
             console.log('An error occured in printing job opening API')
         }
@@ -114,7 +115,7 @@ async function showJobOpening(){
 }
 
 async function jobChoice(){
-    if(side!=null){
+    if(side!=null && title!=null){
         try{
             let body = await axios(jobOpeningApi)
             const jobTitle = body.data.job_families
@@ -157,7 +158,7 @@ async function selectJob(){
                     console.log('The data has already existed in the database. Please choose other job preference')
                     console.log(' ')
                 }else{
-                    await db.addToTable(person_byu_id,person_name,answer,search,'https://www.byu.edu/search-all?q='
+                    await db.addToTable(person_byu_id,person_name,search,answer,'https://www.byu.edu/search-all?q='
                         +answer.replaceAll(' ','%20'))
                 }
             })

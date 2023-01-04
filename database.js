@@ -29,15 +29,15 @@ async function testDatabaseConnectivity (){
 }
 
 // Add the data to the database
-async function addToTable (byu_id, name, desire_job, job_category,job_link){
+async function addToTable (byu_id, name, job_category, desired_job_name,job_link){
     try{
         params.user = await aws_name.then(i=>i.Value)
         params.password = await aws_password.then(i=>i.Value)
         console.log('Adding something to the table...')
         const client = new Client(params)
         await client.connect()
-        const queryText = 'INSERT INTO job (BYU_ID, NAME, DESIRE_JOB, JOB_CATEGORY, JOB_LINK) VALUES ($1, $2, $3, $4, $5)'
-        const values =[byu_id, name, desire_job, job_category, job_link]
+        const queryText = 'INSERT INTO job (BYU_ID, NAME, JOB_CATEGORY, DESIRED_JOB_NAME, JOB_LINK) VALUES ($1, $2, $3, $4, $5)'
+        const values =[byu_id, name, job_category, desired_job_name, job_link]
         await client.query(queryText, values)
         await client.end()
         console.error('Successfully added a new item on the local database')
@@ -59,8 +59,8 @@ async function createToTable(){
             'CREATE TABLE job ' +
             '(byu_id VARCHAR(9) NOT NULL,' +
             'name VARCHAR(9) NOT NULL,' +
-            'desire_job VARCHAR(100) NOT NULL,' +
             'job_category VARCHAR(100),' +
+            'desired_job_name VARCHAR(100) NOT NULL,' +
             'job_link VARCHAR(500));'
         await client.query(queryText)
         await client.end()
@@ -107,7 +107,7 @@ async function delete_db(byu_id, jobs){
             console.log('Deleting job from table...')
                 const client = new Client(params)
                 await client.connect()
-                const queryText = `DELETE FROM job WHERE byu_id = '${byu_id}' AND desire_job = '${jobs}';`
+                const queryText = `DELETE FROM job WHERE byu_id = '${byu_id}' AND desired_job_name = '${jobs}';`
                 await client.query(queryText)
                 await client.end()
                 console.log('Successfully delete the prefer job')
@@ -144,10 +144,10 @@ async function viewDesirejob(byuid) {
         params.password = await aws_password.then(i=>i.Value)
         const client = new Client(params)
         await client.connect()
-        const queryText = `SELECT desire_job FROM job WHERE byu_id = '${byuid}';`
+        const queryText = `SELECT desired_job_name FROM job WHERE byu_id = '${byuid}';`
         let a = await client.query(queryText)
         await client.end()
-        job = a.rows.map(obj => obj.desire_job)
+        job = a.rows.map(obj => obj.desired_job_name)
     }catch (e){
         throw 'you have not chosen any desired job yet'
     }
