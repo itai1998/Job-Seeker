@@ -2,6 +2,7 @@ const { Client } = require('pg')
 const a = require('./input')
 const input = a.input
 const {aws_name, aws_password} = require("./aws");
+const {connectionString} = require("pg/lib/defaults");
 
 const params ={
     host: 'localhost',
@@ -153,4 +154,5 @@ async function viewDesirejob(byuid) {
     }
     return(job)
 }
+
 module.exports = {testDatabaseConnectivity, createToTable, addToTable, seeTable, delete_db, deleteAll, viewDesirejob}

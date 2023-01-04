@@ -69,13 +69,13 @@ async function person(){
 }
 
 // show the list of departments with its job opening name
-async function jobOpening(){
+async function showDepartment(){
         try{
             // get list of department
             jobOpeningApi.url ='https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites'
             let body = await axios(jobOpeningApi)
             const job = body.data.sites
-            console.log('Here are the departments that have job opening:')
+            console.log('Here are the departments at BYU:')
             console.log('Enter the Side ID to see detail information ')
             console.log(' ')
             for(let i=0; i<job.length; i++){
@@ -87,14 +87,16 @@ async function jobOpening(){
         }
 }
 
-async function jobDetail(){
+async function showJobOpening(){
     try{
         jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/' +side+ '/job_families'
         let body = await axios(jobOpeningApi)
         const jobList = body.data.job_families
         console.log('')
         if(jobList.length ===0){
+            console.clear()
             console.log('Sorry, no job available for this department right now. Please try other departments.')
+            console.log(' ')
             side = null
         }else {
             for (let i = 0; i < jobList.length; i++) {
@@ -127,7 +129,9 @@ async function jobChoice(){
             const jobList = body.data.job_openings
 
             if(jobList.length===0){
-                console.log('Sorry, the position is not available right now. Please try other departments.')
+                console.clear()
+                console.log('Sorry, the Title ID doesn\'t existed or the position is not available right now. Please try other departments.')
+                console.log(' ')
                 title = null
             }else{
                 for(let i=0; i<jobList.length; i++){
@@ -142,8 +146,9 @@ async function jobChoice(){
     }
 }
 
-async function select(){
+async function selectJob(){
     if(side !=null && title != null){
+        await console.clear()
         await prompt.run()
             .then(async answer=>{
                 await db.addToTable(person_byu_id,person_name,answer,search,'https://www.byu.edu/search-all?q='
@@ -154,11 +159,7 @@ async function select(){
             //     + '\"' + search + '\"'
             //     + ' at https://hrms.byu.edu/psc/ps/PUBLIC/HRMS/c/HRS_HRAM.HRS_APP_SCHJOB.GBL?Page=HRS_APP_SCHJOB&Action=U'))
             .catch(console.error)
-
-
     }
-
-
 }
 
 async function menu(){
@@ -173,25 +174,32 @@ async function menu(){
     await action.run()
         .then(async answer => {
             if (answer === 'Add prefer job') {
-                await selectJob()
+                await addJob()
                 await returnToMenu()
             } else if (answer === 'Delete specific job') {
                 await removeJob()
                 await console.clear()
+                await console.log('Successfully deleting the job...')
+                await console.log(' ')
                 await returnToMenu()
             } else if (answer ==='Delete all jobs') {
                 while(true){
                 let x = await input('Are you sure you want to delete all the desired jobs from the table? (y/n): ')
                     if(x==='y' || x ==='Y' ){
                         await db.deleteAll(person_byu_id)
+                        await console.clear()
+                        await console.log('Successful deleting all jobs preference...')
+                        await console.log(' ')
                         break
                     }else if(x==='n' || x === 'N'){
+                        await console.clear()
+                        await console.log('Cancel the action...')
+                        await console.log(' ')
                         break
                     }else{
                         continue
                     }
                 }
-                console.clear()
                 await returnToMenu()
             } else {
                 console.log('Bye Bye')
@@ -212,20 +220,19 @@ async function removeJob(){
         })
 }
 
-async function selectJob(){
-    await jobOpening()
-    await jobDetail()
+async function addJob(){
+    await showDepartment()
+    await showJobOpening()
     await jobChoice()
-    await select()
+    await selectJob()
 }
 
 async function returnToMenu(){
-    await resetSelect()
+    await resetSelectJob()
     await menu()
-
 }
 
-async function resetSelect(){
+async function resetSelectJob(){
      prompt = new Select({
         name: 'jobPrefer',
         message: 'Select the job you are interested in',
@@ -240,5 +247,5 @@ async function all(){
         await menu()
     }
 }
-
 all()
+
