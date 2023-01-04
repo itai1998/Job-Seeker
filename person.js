@@ -37,4 +37,3 @@ async function person(){
 }
 
 module.exports = {person}
-person()

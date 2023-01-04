@@ -1,87 +1,13 @@
-//*********Technical Challenge Top**************/
-const AWS = require('aws-sdk')
-AWS.config.update({region: 'us-west-2'})
-const ssm = new AWS.SSM()
-
-// set credential variable
-let username, password
-
-// Set password from AWS
-const passwordParam = {
-    Name: '/I-Tai-technical-challenge/dev/database_password',
-    WithDecryption: true
-}
-
-ssm.getParameter(passwordParam).promise()
-    .then(data => {
-        const credential = data.Parameter.Value
-        password=credential
-        })
-
-
-
-
-// Set username from AWS
-const usernameParam ={
-    Name: '/I-Tai-technical-challenge/dev/database_username',
-    WithDecryption: true
-}
-ssm.getParameter(usernameParam).promise()
-    .then(data => {
-        const credential = data.Parameter.Value
-        //console.log(credential)
-        username=credential
-    })
-
-
 //Require postgres to connect the code to SQL
 const axios = require('axios')
 const { Client } = require('pg')
-const { Select } = require('enquirer')
+const { Select, AutoComplete } = require('enquirer')
 const getInput = require('./input')
+const input = getInput.input
 const index = require('./token')
 const token = index.token
+const db = require('./database')
 
-//Params for SQL Code
-const params ={
-    host: 'localhost',
-    user:null,
-    //user: 'itai1998',
-    //user:process.env.user,
-    password:null,
-    //password: process.env.password,
-    //password: 'Ether750609',
-    database: 'pgdb',
-    port: 5432
-}
-
-// Select enquirer
-const prompt = new Select({
-    name: 'jobPrefer',
-    message: 'Select the job you are interested in',
-    choices: []
-})
-
-
-//Add To SQL Table by using BYU's Person's API
-async function addToTable (byu_id, name, phoneNumber, address){
-    try{
-        params.user = username
-        params.password = password
-        console.log('Adding something to the table...')
-        const client = new Client(params)
-        await client.connect()
-        const queryText = 'INSERT INTO MY_TABLE (BYU_ID, FULL_NAME, PHONE_NUMBER, ADDRESS) VALUES ($1, $2, $3, $4)'
-        const values =[byu_id, name, phoneNumber, address]
-        await client.query(queryText, values)
-        await client.end()
-        console.error('Successfully added a new item on the local database')
-    } catch(e){
-        console.error('Unable to add a new item on the local database')
-        console.log(e)
-        throw e
-    }
-}
 
 //"Get" API from url
 //Get BYU's Person's API
@@ -102,46 +28,38 @@ const jobOpeningApi = {
     }
 }
 
+/****************My Code*************************/
+let person_name, person_byu_id
+let side, title, search
 
-
-// Get all the information
-// Add everything to the table
-async function main(){
-    let byu_id, name, phoneNumber, address
-    try{
-        // get id and name
-        let body = await axios(options)
-        const person = body.data.basic
-        byu_id = person.byu_id.value
-        name = person.name_fnf.value
-        console.log(byu_id)
-        console.log(name)
-
-        // get phone number
-        options.url = 'https://api-sandbox.byu.edu/byuapi/persons/v3/452999669/phones'
-        body = await axios(options)
-        const phones = body.data.values[0]
-        phoneNumber = phones.lookup_number.value
-        console.log(phoneNumber)
-
-        // get address
-        options.url = 'https://api-sandbox.byu.edu/byuapi/persons/v3/452999669/addresses'
-        body = await axios(options)
-        const addresses = body.data
-        address = addresses.values[0].address_line_1.value + " " + addresses.values[0].address_line_2.value
-        console.log(address)
-
-        // add everything to the table
-        //await addToTable(byu_id, name, phoneNumber, address)
-        console.log('this is for test')
-    } catch (e){
-        console.log('An error occured in one of the calls')
-        throw e
+// get student's name and byu_id
+async function person(){
+    while(true){
+        try{
+            let id = await input('Enter you student ID: ')
+            const options ={
+                url: `https://api-sandbox.byu.edu:443/byuapi/persons/v3/${id}`,
+                method: 'GET',
+                headers:{
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+            const body = await axios(options)
+            const person = body.data.basic
+            person_byu_id = person.byu_id.value
+            name = person.name_fnf.value
+            let question = await input(`Is ${name} your name? y or n >>> `)
+            if(question==='y' || question ==='Y'){
+                console.clear()
+                person_name = name
+                break
+            }
+        } catch (e){
+            console.log(`The ID is not existed. Please enter the valid ID.`)
+            continue
+        }
     }
 }
-
-/****************My Code*************************/
-let side, title, search
 
 // show the list of departments with its job opening name
 async function jobOpening(){
@@ -155,6 +73,7 @@ async function jobOpening(){
             for(let i=0; i<job.length; i++){
                 console.log('Side ID: '+job[i].site_id +'-'+ job[i].site_description)
             }
+            side = await input('Enter the side ID to see the job opening: ')
         } catch(e){
             console.log('An error occured in printing job 1opening API')
         }
@@ -162,7 +81,6 @@ async function jobOpening(){
 
 async function jobDetail(){
     try{
-        side = await getInput.input('Enter the side ID to see the job opening: ')
         jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/' +side+ '/job_families'
         let body = await axios(jobOpeningApi)
         const jobList = body.data.job_families
@@ -175,13 +93,11 @@ async function jobDetail(){
                 console.log('Title ID: ' + jobList[i].job_template_id + ' --' + jobList[i].job_title)
             }
         }
-
         if(side != null){
-            title = await getInput.input('Enter the title ID: ')
+            title = await input('Enter the title ID: ')
         } else{
             title = null
         }
-
     }catch(e){
         console.error(e)
     }
@@ -198,7 +114,6 @@ async function jobChoice(){
                     break
                 }
             }
-
             jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/'+ side+'/job_families/' +title+ '/job_postings'
             body = await axios(jobOpeningApi)
             const jobList = body.data.job_openings
@@ -212,8 +127,6 @@ async function jobChoice(){
                     prompt.choices.push(jobList[i].posting_title)
                 }
             }
-
-
         }catch(e){
             console.error(e)
             console.log('no')
@@ -223,46 +136,103 @@ async function jobChoice(){
 
 }
 
-function select(){
+
+// Select enquirer
+const prompt = new Select({
+    name: 'jobPrefer',
+    message: 'Select the job you are interested in',
+    choices: []
+})
+async function select(){
     if(side !=null && title != null){
         prompt.run()
-            .then(answer => console.log('Cope the url to see more detail: https://www.byu.edu/search-all?q='
-                +answer.replaceAll(' ','%20')+ ' \nor \nsearch '
-                + '\"' + search + '\"'
-                + ' at https://hrms.byu.edu/psc/ps/PUBLIC/HRMS/c/HRS_HRAM.HRS_APP_SCHJOB.GBL?Page=HRS_APP_SCHJOB&Action=U'))
+            .then(answer=>{
+                db.addToTable(person_byu_id,person_name,answer,search,title)
+            })
+            // .then(answer => console.log('Cope the url to see more detail: https://www.byu.edu/search-all?q='
+            //     +answer.replaceAll(' ','%20')+ ' \nor \nsearch '
+            //     + '\"' + search + '\"'
+            //     + ' at https://hrms.byu.edu/psc/ps/PUBLIC/HRMS/c/HRS_HRAM.HRS_APP_SCHJOB.GBL?Page=HRS_APP_SCHJOB&Action=U'))
             .catch(console.error)
+
     }
+
 }
 
-async function all(){
+async function menu(){
+    await db.seeTable(person_byu_id)
+    console.log(`Please select the action:`  )
+    const action = new Select({
+        name: 'menu',
+        message: 'What action do you want?',
+        choices:['Add prefer job', 'Delete specific job', 'Delete all jobs', 'Exit']
+
+    })
+    await action.run()
+        .then(async answer => {
+            if (answer === 'Add prefer job') {
+                await selectJob()
+            } else if (answer === 'Delete specific job') {
+                await removeJob()
+                await returnToMenu()
+            } else if (answer ==='Delete all jobs') {
+                while(true){
+                let x = await input('Are you sure you want to delete all the desired jobs from the table? (y/n): ')
+                    if(x==='y' || x ==='Y' ){
+                        await db.deleteAll(person_byu_id)
+                        break
+                    }else if(x==='n' || x === 'N'){
+                        break
+                    }else{
+                        continue
+                    }
+                }
+            } else {
+                console.log('Bye Bye')
+            }
+        })
+}
+
+async function removeJob(){
+    const remove = await new AutoComplete({
+        name: 'job delete',
+        message: 'Select the job that you want to remove.',
+        limit: 10,
+        choices: await db.viewDesirejob(person_byu_id)
+    })
+    await remove.run()
+        .then(async answer=>{
+            await db.delete_db(person_byu_id, answer)
+        })
+}
+
+async function selectJob(){
     await jobOpening()
     await jobDetail()
     await jobChoice()
-    console.log(' ')
-    select()
-    //badInput()
+    await select()
+}
 
+async function returnToMenu(){
+    await menu()
+}
+
+async function all(){
+    await person()
+    if(person_name !==undefined && person_byu_id !== undefined){
+        console.log('Welcome back '+person_name)
+        await menu()
+    }
 }
 
 all()
 
-
-
-//*******************Test if the code connect to the SQL********/
-// async function testDatabaseConnectivity (){
-//     try{
-//         params.user = username
-//         params.password = password
-//         console.log('Testing connection to local database')
-//         const client = new Client(params)
-//         await client.connect()
-//         const result = await client.query('SELECT 1 + 1 as test')
-//         console.log(result.rows)
-//         await client.end()
-//     } catch(e){
-//         console.error('Unable to connect to local database')
-//         throw e
-//     }
+// async function test(){
+//     await selectJob()
+//     console.log(job_name)
 // }
+// test()
 
-//testDatabaseConnectivity()
+
+
+
