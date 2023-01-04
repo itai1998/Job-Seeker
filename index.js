@@ -148,11 +148,18 @@ async function jobChoice(){
 
 async function selectJob(){
     if(side !=null && title != null){
+        let y = await db.viewDesirejob(person_byu_id)
         await console.clear()
         await prompt.run()
             .then(async answer=>{
-                await db.addToTable(person_byu_id,person_name,answer,search,'https://www.byu.edu/search-all?q='
-                    +answer.replaceAll(' ','%20'))
+                if(y.includes(answer)){
+                    console.clear()
+                    console.log('The data has already existed in the database. Please choose other job preference')
+                    console.log(' ')
+                }else{
+                    await db.addToTable(person_byu_id,person_name,answer,search,'https://www.byu.edu/search-all?q='
+                        +answer.replaceAll(' ','%20'))
+                }
             })
             // .then(answer => console.log('Cope the url to see more detail: https://www.byu.edu/search-all?q='
             //     +answer.replaceAll(' ','%20')+ ' \nor \nsearch '
@@ -247,5 +254,5 @@ async function all(){
         await menu()
     }
 }
-all()
 
+all()
