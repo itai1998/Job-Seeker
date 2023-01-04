@@ -28,6 +28,13 @@ const jobOpeningApi = {
     }
 }
 
+// Select enquirer
+let prompt = new Select({
+    name: 'jobPrefer',
+    message: 'Select the job you are interested in',
+    choices: []
+})
+
 /****************My Code*************************/
 let person_name, person_byu_id
 let side, title, search
@@ -65,6 +72,7 @@ async function person(){
 async function jobOpening(){
         try{
             // get list of department
+            jobOpeningApi.url ='https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites'
             let body = await axios(jobOpeningApi)
             const job = body.data.sites
             console.log('Here are the departments that have job opening:')
@@ -75,7 +83,7 @@ async function jobOpening(){
             }
             side = await input('Enter the side ID to see the job opening: ')
         } catch(e){
-            console.log('An error occured in printing job 1opening API')
+            console.log('An error occured in printing job opening API')
         }
 }
 
@@ -130,24 +138,16 @@ async function jobChoice(){
         }catch(e){
             console.error(e)
             console.log('no')
-
         }
     }
-
 }
 
-
-// Select enquirer
-const prompt = new Select({
-    name: 'jobPrefer',
-    message: 'Select the job you are interested in',
-    choices: []
-})
 async function select(){
     if(side !=null && title != null){
-        prompt.run()
-            .then(answer=>{
-                db.addToTable(person_byu_id,person_name,answer,search,title)
+        await prompt.run()
+            .then(async answer=>{
+                await db.addToTable(person_byu_id,person_name,answer,search,'https://www.byu.edu/search-all?q='
+                    +answer.replaceAll(' ','%20'))
             })
             // .then(answer => console.log('Cope the url to see more detail: https://www.byu.edu/search-all?q='
             //     +answer.replaceAll(' ','%20')+ ' \nor \nsearch '
@@ -155,7 +155,9 @@ async function select(){
             //     + ' at https://hrms.byu.edu/psc/ps/PUBLIC/HRMS/c/HRS_HRAM.HRS_APP_SCHJOB.GBL?Page=HRS_APP_SCHJOB&Action=U'))
             .catch(console.error)
 
+
     }
+
 
 }
 
@@ -172,8 +174,10 @@ async function menu(){
         .then(async answer => {
             if (answer === 'Add prefer job') {
                 await selectJob()
+                await returnToMenu()
             } else if (answer === 'Delete specific job') {
                 await removeJob()
+                await console.clear()
                 await returnToMenu()
             } else if (answer ==='Delete all jobs') {
                 while(true){
@@ -187,6 +191,8 @@ async function menu(){
                         continue
                     }
                 }
+                console.clear()
+                await returnToMenu()
             } else {
                 console.log('Bye Bye')
             }
@@ -214,7 +220,17 @@ async function selectJob(){
 }
 
 async function returnToMenu(){
+    await resetSelect()
     await menu()
+
+}
+
+async function resetSelect(){
+     prompt = new Select({
+        name: 'jobPrefer',
+        message: 'Select the job you are interested in',
+        choices: []
+    })
 }
 
 async function all(){
@@ -226,13 +242,3 @@ async function all(){
 }
 
 all()
-
-// async function test(){
-//     await selectJob()
-//     console.log(job_name)
-// }
-// test()
-
-
-
-
