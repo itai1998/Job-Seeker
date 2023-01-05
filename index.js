@@ -90,16 +90,18 @@ async function showDepartment(){
 
 async function showJobOpening(){
     try{
+        console.clear()
         jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/' +side+ '/job_families'
         let body = await axios(jobOpeningApi)
         const jobList = body.data.job_families
         console.log('')
         if(jobList.length ===0){
-            console.clear()
             console.log('Sorry, no job available for this department right now. Please try other departments.')
             console.log(' ')
             side = null
         }else {
+            console.log('Here are the job category. Please enter the Title ID to see the job opening.')
+            console.log(' ')
             for (let i = 0; i < jobList.length; i++) {
                 console.log('Title ID: ' + jobList[i].job_template_id + ' --' + jobList[i].job_title)
             }
@@ -110,7 +112,7 @@ async function showJobOpening(){
             title = null
         }
     }catch(e){
-        console.error(e)
+        console.error('You do not enter the Title ID! Return to the menu...')
     }
 }
 
@@ -141,8 +143,10 @@ async function jobChoice(){
                 }
             }
         }catch(e){
-            console.error(e)
-            console.log('no')
+            console.clear()
+            console.error('You do not enter the Title ID! Return to the menu...')
+            console.log(' ')
+            await returnToMenu()
         }
     }
 }
