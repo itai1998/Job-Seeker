@@ -35,5 +35,4 @@ async function person(){
     exports.name = name
     exports.byu_id = byu_id
 }
-
 module.exports = {person}

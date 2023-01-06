@@ -165,12 +165,7 @@ async function selectJob(){
                     await db.addToTable(person_byu_id,person_name,search,answer,'https://www.byu.edu/search-all?q='
                         +answer.replaceAll(' ','%20'))
                 }
-            })
-            // .then(answer => console.log('Cope the url to see more detail: https://www.byu.edu/search-all?q='
-            //     +answer.replaceAll(' ','%20')+ ' \nor \nsearch '
-            //     + '\"' + search + '\"'
-            //     + ' at https://hrms.byu.edu/psc/ps/PUBLIC/HRMS/c/HRS_HRAM.HRS_APP_SCHJOB.GBL?Page=HRS_APP_SCHJOB&Action=U'))
-            .catch(console.error)
+            }).catch(console.error)
     }
 }
 
