@@ -9,3 +9,9 @@ This program uses the following APIs:
 4. Job_Openings v1 (specified job families)
 
 # User Guide
+## Setting Up the Program
+Working on it. Will be edited later
+
+## Run the program
+
+
