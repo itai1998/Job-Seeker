@@ -21,3 +21,16 @@ The program will then show the user's name according to BYU ID. The user will be
 
 ![1](https://user-images.githubusercontent.com/107719287/211405123-cd1a03bc-40f8-4224-a1f1-028aa80b927d.png)
 
+Upon validation, the main menu will be displayed with a welcome message and the introduction of BYU Job Seeker.
+The user can select what actions they want to take from the four options below:
+1. Add preferred job
+2. Delete specific job
+3. Delete all jobs
+4. Exit
+
+![1](https://user-images.githubusercontent.com/107719287/211644477-05cf0602-f39c-4f23-8e88-415ebc4b148e.png)
+
+### Add preferred job
+If the user select "Add preferred job", the program will list the departments from BYU with their Site ID and prompt the user to choose which deparment they are interested in by entering the Side ID. 
+
+![1](https://user-images.githubusercontent.com/107719287/211649644-4ee5719e-b795-4f96-8c9c-a98f372488b0.png)
