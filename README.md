@@ -17,5 +17,6 @@ The program will first test if AWS successfully connects to the darker database.
 
 ![1](https://user-images.githubusercontent.com/107719287/211399767-6be04f76-825b-4d3c-b578-8f46416fee6e.png)
 
+The program will then show the user's name according to BYU ID. The user will be verified that the given name is corrected or not.
 
 ![1](https://user-images.githubusercontent.com/107719287/211405123-cd1a03bc-40f8-4224-a1f1-028aa80b927d.png)
