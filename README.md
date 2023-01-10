@@ -30,7 +30,19 @@ The user can select what actions they want to take from the four options below:
 
 ![1](https://user-images.githubusercontent.com/107719287/211644477-05cf0602-f39c-4f23-8e88-415ebc4b148e.png)
 
-### Add preferred job
+### 1. Add preferred job
 If the user select "Add preferred job", the program will list the departments from BYU with their Site ID and prompt the user to choose which deparment they are interested in by entering the Side ID. 
 
 ![1](https://user-images.githubusercontent.com/107719287/211649644-4ee5719e-b795-4f96-8c9c-a98f372488b0.png)
+
+After entering the Side ID, the category with their Title ID of that department will be listed. Again, the user can tell the program which category they are interested in by entering the Title ID.
+
+![1](https://user-images.githubusercontent.com/107719287/211652486-7205421e-d35f-4309-b416-cc06c996bc50.png)
+
+The program will show all the job openings according to the user's chosen category. The user can select the job they want by selecting the job title.
+
+![1](https://user-images.githubusercontent.com/107719287/211654826-9b773974-7fa2-4a43-be50-df6a962049dd.png)
+
+The selected job will be saved in the table, and the program will return to the menu. 
+
+![1](https://user-images.githubusercontent.com/107719287/211656836-a0468184-8884-46ae-a6b5-050443740c1f.png)
