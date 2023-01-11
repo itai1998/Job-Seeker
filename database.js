@@ -22,8 +22,9 @@ async function testDatabaseConnectivity (){
         const result = await client.query('SELECT 1 + 1 as test')
         console.log(result.rows)
         await client.end()
+        console.log('Successfully connected to darker database...')
     } catch(e){
-        console.error('Unable to connect to local database')
+        console.error('Unable to connect to local database. Please check the set up...')
         throw e
     }
 }
@@ -41,6 +42,7 @@ async function addToTable (byu_id, name, job_category, desired_job_name,job_link
         await client.query(queryText, values)
         await client.end()
         console.error('Successfully added a new item on the local database')
+        console.log(' ')
     } catch(e){
         console.error('Unable to add a new item on the local database')
         console.log(e)
@@ -82,7 +84,7 @@ async function seeTable(byuId) {
         await client.end()
         a = a.rows
         if(a.length === 0){
-            console.log('You do not have any prefer job')
+            console.log('You do not have any preferred job right now.')
         }else{
             console.log('You can see more job opening details by click the job_link')
             console.log('or')

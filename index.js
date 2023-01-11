@@ -62,7 +62,7 @@ async function person(){
                 break
             }
         } catch (e){
-            console.log(`The ID is not existed. Please enter the valid ID.`)
+            console.log(`The ID is not existed. Please enter the valid ID and check if the token is valid.`)
             continue
         }
     }
@@ -159,7 +159,7 @@ async function selectJob(){
             .then(async answer=>{
                 if(y.includes(answer)){
                     console.clear()
-                    console.log('The data has already existed in the database. Please choose other job preference')
+                    console.log('The data has already existed in the database. Please choose other job preference.')
                     console.log(' ')
                 }else{
                     await db.addToTable(person_byu_id,person_name,search,answer,'https://www.byu.edu/search-all?q='
@@ -175,12 +175,12 @@ async function menu(){
     const action = new Select({
         name: 'menu',
         message: 'What action do you want?',
-        choices:['Add prefer job', 'Delete specific job', 'Delete all jobs', 'Exit']
+        choices:['Add preferred job', 'Delete specific job', 'Delete all preferred jobs', 'Exit']
 
     })
     await action.run()
         .then(async answer => {
-            if (answer === 'Add prefer job') {
+            if (answer === 'Add preferred job') {
                 await addJob()
                 await returnToMenu()
             } else if (answer === 'Delete specific job') {
@@ -189,7 +189,7 @@ async function menu(){
                 await console.log('Successfully deleting the job...')
                 await console.log(' ')
                 await returnToMenu()
-            } else if (answer ==='Delete all jobs') {
+            } else if (answer ==='Delete all preferred jobs') {
                 while(true){
                 let x = await input('Are you sure you want to delete all the desired jobs from the table? (y/n): ')
                     if(x==='y' || x ==='Y' ){
@@ -208,8 +208,9 @@ async function menu(){
                     }
                 }
                 await returnToMenu()
-            } else {
+            } else if(answer==='Exit'){
                 console.log('Bye Bye')
+
             }
         })
 }
@@ -221,10 +222,18 @@ async function removeJob(){
         limit: 10,
         choices: await db.viewDesirejob(person_byu_id)
     })
-    await remove.run()
-        .then(async answer=>{
-            await db.delete_db(person_byu_id, answer)
-        })
+    if(remove.choices.length !=0){
+        await remove.run()
+            .then(async answer=>{
+                await db.delete_db(person_byu_id, answer)
+            })
+    }else{
+        console.clear()
+        await console.log('Nothing to delete. Return to menu...')
+        await console.log(' ')
+
+    }
+
 }
 
 async function addJob(){
@@ -235,6 +244,7 @@ async function addJob(){
 }
 
 async function returnToMenu(){
+    console.log('Welcome back '+person_name)
     await resetSelectJob()
     await menu()
 }
@@ -248,9 +258,12 @@ async function resetSelectJob(){
 }
 
 async function all(){
+    await db.testDatabaseConnectivity()
+    console.log(' ')
     await person()
     if(person_name !==undefined && person_byu_id !== undefined){
-        console.log('Welcome back '+person_name)
+        console.log(person_name+'! welcome to BYU Job Seeker. BYU Job Seeker allows students at BYU to find their desired job on campus by selecting the departments and job categories.')
+        console.log(' ')
         await menu()
     }
 }
