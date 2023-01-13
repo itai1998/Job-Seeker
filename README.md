@@ -10,7 +10,20 @@ This program uses the following APIs:
 
 # User Guide
 ## Setting Up the Program
-Working on it. Will be edited later
+### 1) Amazon Web Service
+Log on to AWS services and navigate to the BYU AWS Store
+
+![1](https://user-images.githubusercontent.com/107719287/212414786-2c4c0539-b121-428e-8ce9-5cc9dba9dfd9.png)
+
+Under PowerUser, select Command line or programmatic access, then select PowerShell at the top.
+Copy Option 1
+
+![1](https://user-images.githubusercontent.com/107719287/212415185-d32632c9-7b13-4969-96fe-bbae80c21619.png)
+
+Paste your AWS Credentials into the command line of your CLI Move on to step 2) Installation
+
+### 2)Installation
+
 
 ## Run the program
 The program will first test if AWS successfully connects to the darker database. After the verification is successful, the program will ask the users to enter their BYU ID.
