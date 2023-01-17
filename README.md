@@ -22,8 +22,24 @@ Copy Option 1
 
 Paste your AWS Credentials into the command line of your CLI Move on to step 2) Installation
 
-### 2)Installation
-
+### 2) Installation
+1. Clone this repository
+- Open the command terminal
+- Navigate to the file using these commands:
+    - **git clone** [https://github.com/byu-oit-training/whimple-technical-challenge.git](https://github.com/byu-oit-training/I-Tai-technical-challenge.git)
+    - **cd I-Tai-technical-challenge**
+ 2. Install necessary packages:
+    - type into the terminal **npm install**
+ 3. Enter AWS Credentials into terminal
+    - See above for how to get AWS Credentials
+ 4. Navigate to the folder in your file explorer containing your project and unzip the db file.
+ 5. Open the Docker Desktop program on your computer
+ 6. Wait 5-10 seconds, or until docker says its running.
+ 7. Type Docker-compose up -d into the terminal
+ 8. Wait 5-10 seconds, or until both databases say they are running.
+ 9. Execute program:
+    - type in to the terminal node main.js
+10. Move on to Usage below
 
 ## Run the program
 The program will first test if AWS successfully connects to the darker database. After the verification is successful, the program will ask the users to enter their BYU ID.
