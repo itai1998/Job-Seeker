@@ -39,7 +39,6 @@ Paste your AWS Credentials into the command line of your CLI Move on to step 2) 
  8. Wait 5-10 seconds, or until both databases say they are running.
  9. Execute program:
     - type in to the terminal node main.js
-10. Move on to Usage below
 
 ## Run the program
 The program will first test if AWS successfully connects to the darker database. After the verification is successful, the program will ask the users to enter their BYU ID.
