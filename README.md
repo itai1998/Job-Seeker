@@ -40,6 +40,11 @@ Paste your AWS Credentials into the command line of your CLI Move on to step 2) 
  9. Execute program:
     - type in to the terminal node main.js
 
+### 3) Adding/Updating the token
+- You would need to update the token every hour in order to run the program. Find token.js and paste the valid token.  
+
+![1](https://user-images.githubusercontent.com/107719287/213271357-1c33c111-328a-43db-8e16-3f8a3499cd46.png)
+
 ## Run the program
 The program will first test if AWS successfully connects to the darker database. After the verification is successful, the program will ask the users to enter their BYU ID.
 
