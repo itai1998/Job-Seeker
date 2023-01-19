@@ -21,5 +21,13 @@
     "axios": "^1.2.1",
     "enquirer": "^2.3.6",
     "pg": "^8.8.0"
+  },
+  "scripts": {
+    "database": "docker-compose up -d",
+    "shutdown": "docker-compose down",
+    "start": "node index.js",
+    "all": "npm run database && npm run start",
+    "extract-db": "tar.exe -xf db.zip",
+    "compress-db": "tar.exe -acf db.zip db"
   }
 }
