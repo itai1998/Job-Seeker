@@ -1,5 +1,16 @@
-.idea
+# ignore installed packages
 node_modules
-*terraform*
+# ignore hidden files made by Jetbrains
+.idea
+# ignore terraform files and directories
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+# Ignore hidden OS files (mac only)
+.DS_Store
+# The database folder alone is really big and doesn't work when cloned on other computers, so ignore it
 db
+#DONT however, ignore the db.zip. We need to commit that.
+# if you end up using .env or .env-db, we need to not include those either.
 .env*
