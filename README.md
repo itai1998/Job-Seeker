@@ -10,7 +10,40 @@ This program uses the following APIs:
 
 # User Guide
 ## Setting Up the Program
-Working on it. Will be edited later
+### 1) Amazon Web Service
+Log on to AWS services and navigate to the BYU AWS Store
+
+![1](https://user-images.githubusercontent.com/107719287/212414786-2c4c0539-b121-428e-8ce9-5cc9dba9dfd9.png)
+
+Under PowerUser, select Command line or programmatic access, then select PowerShell at the top.
+Copy Option 1
+
+![1](https://user-images.githubusercontent.com/107719287/212415185-d32632c9-7b13-4969-96fe-bbae80c21619.png)
+
+Paste your AWS Credentials into the command line of your CLI Move on to step 2) Installation
+
+### 2) Installation
+1. Clone this repository
+- Open the command terminal
+- Navigate to the file using these commands:
+    - **git clone** [https://github.com/byu-oit-training/whimple-technical-challenge.git](https://github.com/byu-oit-training/I-Tai-technical-challenge.git)
+    - **cd I-Tai-technical-challenge**
+ 2. Install necessary packages:
+    - type into the terminal **npm install**
+ 3. Enter AWS Credentials into terminal
+    - See above for how to get AWS Credentials
+ 4. Navigate to the folder in your file explorer containing your project and unzip the db file.
+ 5. Open the Docker Desktop program on your computer
+ 6. Wait 5-10 seconds, or until docker says its running.
+ 7. Type Docker-compose up -d into the terminal
+ 8. Wait 5-10 seconds, or until both databases say they are running.
+ 9. Execute program:
+    - type in to the terminal node main.js
+
+### 3) Adding/Updating the token
+- You would need to update the token every hour in order to run the program. Find token.js and paste the valid token.  
+
+![1](https://user-images.githubusercontent.com/107719287/213271357-1c33c111-328a-43db-8e16-3f8a3499cd46.png)
 
 ## Run the program
 The program will first test if AWS successfully connects to the darker database. After the verification is successful, the program will ask the users to enter their BYU ID.
@@ -46,3 +79,27 @@ The program will show all the job openings according to the user's chosen catego
 The selected job will be saved in the table, and the program will return to the menu. 
 
 ![1](https://user-images.githubusercontent.com/107719287/211656836-a0468184-8884-46ae-a6b5-050443740c1f.png)
+
+### 2. Delete specific job
+The option "Delete specific job" allows the users to remove the job they choose from the table. The job title will be listed, so the users can select the job title to remove the job.
+
+![1](https://user-images.githubusercontent.com/107719287/211901877-a067b430-8f28-437b-9118-8f4e6f612c29.png)
+
+The program will show a message "Successfully deleting the job..." after the user selects the job title. The program will then return to the menu, and the selected job will be removed from the table.
+
+![1](https://user-images.githubusercontent.com/107719287/211902046-c992aebd-22a1-42ae-a2d5-eb8bb742f9e3.png)
+
+### 3.  Delete all preferred jobs
+"Delete all preferred jobs" will remove all the preferred jobs that the user selects from the table.
+The program will ask the user if they are sure to remove all the selected jobs or not. 
+
+![1](https://user-images.githubusercontent.com/107719287/211903632-4690459f-54ae-4d20-9f7b-23962bcb1c47.png)
+
+If the user enters "n", the program will return back to the menu and not remove the jobs. But if the user enters "y", the program will remove all the jobs from the table and return to the menu.
+
+![1](https://user-images.githubusercontent.com/107719287/211905456-b37fcc9d-a732-4937-b042-e70873f54e20.png)
+
+### 4. Exit
+The "Exit" option will let the users leave the program
+
+![1](https://user-images.githubusercontent.com/107719287/211906307-56223138-bef6-40da-9ef7-9a42ceee09c3.png)
