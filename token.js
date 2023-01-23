@@ -1,2 +1,2 @@
-const token = 'xeY8js2R97lb5GkLjQo4YqDOUQpL21hL2xzsj2PhSpQ.EcaufE3RrITzwd5JsPL4pW9j-3DVAki3IgFKMWb-NcY'
+const token = 'gG9lKXfV9W_Pe_8aTf0YSaSzpCyYIwYTyohhXOobD-Y.XIsu5uq-LPg1MXrK82IWLOOVRP_UwS7FaWKkHNo89aU'
 exports.token = token

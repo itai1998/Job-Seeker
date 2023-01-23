@@ -7,6 +7,7 @@ const input = getInput.input
 const index = require('./token')
 const token = index.token
 const db = require('./database')
+const api = require('./api')
 
 
 //"Get" API from url
@@ -42,29 +43,15 @@ let side, title, search
 // get student's name and byu_id
 async function person(){
     while(true){
-        try{
-            let id = await input('Enter you student ID: ')
-            const options ={
-                url: `https://api-sandbox.byu.edu:443/byuapi/persons/v3/${id}`,
-                method: 'GET',
-                headers:{
-                    'Authorization': `Bearer ${token}`
-                }
-            }
-            const body = await axios(options)
-            const person = body.data.basic
-            person_byu_id = person.byu_id.value
-            name = person.name_fnf.value
-            let question = await input(`Is ${name} your name? y or n >>> `)
-            if(question==='y' || question ==='Y'){
-                console.clear()
-                person_name = name
-                break
-            }
-        } catch (e){
-            console.log(`The ID is not existed. Please enter the valid ID and check if the token is valid.`)
+        person_byu_id = await api.getStudentId()
+        if (person_byu_id===undefined){
             continue
         }
+        person_name = await api.getStudentName(person_byu_id)
+        if(person_name===undefined){
+            continue
+        }
+        break
     }
 }
 

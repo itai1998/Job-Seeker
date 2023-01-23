@@ -60,7 +60,7 @@ async function createToTable(){
         const queryText =
             'CREATE TABLE job ' +
             '(byu_id VARCHAR(9) NOT NULL,' +
-            'name VARCHAR(9) NOT NULL,' +
+            'name VARCHAR(50) NOT NULL,' +
             'job_category VARCHAR(100),' +
             'desired_job_name VARCHAR(100) NOT NULL,' +
             'job_link VARCHAR(500));'
