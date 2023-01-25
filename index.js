@@ -168,7 +168,7 @@ async function menu(){
     await action.run()
         .then(async answer => {
             if (answer === 'Add preferred job') {
-                await addJob()
+                await addJob2()
                 await returnToMenu()
             } else if (answer === 'Delete specific job') {
                 await removeJob()
@@ -197,7 +197,6 @@ async function menu(){
                 await returnToMenu()
             } else if(answer==='Exit'){
                 console.log('Bye Bye')
-
             }
         })
 }
@@ -230,9 +229,17 @@ async function addJob(){
     await selectJob()
 }
 
+async function addJob2(){
+    let sideId =await api.showDepartment()
+    let titleId =await api.showJobOpening(sideId)
+    let jobCategory =await api.jobChoice(sideId, titleId)
+    await api.selectJob(person_byu_id, person_name,jobCategory)
+}
+
+
 async function returnToMenu(){
     console.log('Welcome back '+person_name)
-    await resetSelectJob()
+    await api.resetSelectJob()
     await menu()
 }
 

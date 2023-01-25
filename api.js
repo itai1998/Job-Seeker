@@ -4,6 +4,7 @@ const input = getInput.input
 const index = require('./token')
 const {Select} = require("enquirer");
 const token = index.token
+const db = require('./database')
 
 
 
@@ -82,16 +83,17 @@ async function showDepartment(){
             console.log('Side ID: '+job[i].site_id +'-'+ job[i].site_description)
         }
         side = await input('Enter the side ID to see the job opening: ')
+        return side
 
     } catch(e){
         console.log('An error occured in printing job opening API')
     }
 }
 
-async function showJobOpening(){
+async function showJobOpening(sideName){
     try{
         console.clear()
-        jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/' +side+ '/job_families'
+        jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/' +sideName+ '/job_families'
         let body = await axios(jobOpeningApi)
         const jobList = body.data.job_families
         console.log('')
@@ -108,15 +110,16 @@ async function showJobOpening(){
         }
         if(side != null){
             title = await input('Enter the title ID: ')
+            return title
         } else{
             title = null
         }
     }catch(e){
-        console.error('You do not enter the Title ID! Return to the menu...')
+        console.error('You do not enter the Side ID! Return to the menu...')
     }
 }
 
-async function jobChoice(){
+async function jobChoice(sideId, titleId){
     if(side!=null && title!=null){
         try{
             let body = await axios(jobOpeningApi)
@@ -127,7 +130,7 @@ async function jobChoice(){
                     break
                 }
             }
-            jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/'+ side+'/job_families/' +title+ '/job_postings'
+            jobOpeningApi.url = 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites/'+ sideId+'/job_families/' +titleId+ '/job_postings'
             body = await axios(jobOpeningApi)
             const jobList = body.data.job_openings
 
@@ -138,7 +141,7 @@ async function jobChoice(){
                 title = null
             }else{
                 for(let i=0; i<jobList.length; i++){
-                    console.log('Opening ID: ' +jobList[i].opening_id + ' --'+jobList[i].posting_title)
+                    // console.log('Opening ID: ' +jobList[i].opening_id + ' --'+jobList[i].posting_title)
                     prompt.choices.push(jobList[i].posting_title)
                 }
             }
@@ -146,37 +149,38 @@ async function jobChoice(){
             console.clear()
             console.error('You do not enter the Title ID! Return to the menu...')
             console.log(' ')
-            //await returnToMenu()
         }
     }
+    return search
 }
 
-async function selectJob(){
-    if(side !=null && title != null){
-        //let y = await db.viewDesirejob(person_byu_id)
+async function selectJob(studentId, studentName, jobCategory){
+    if(prompt.choices.length!=0){
+        let y = await db.viewDesirejob(person_byu_id)
         await console.clear()
         await prompt.run()
             .then(async answer=>{
                 job_name = answer
-                // if(y.includes(answer)){
-                //     console.clear()
-                //     console.log('The data has already existed in the database. Please choose other job preference.')
-                //     console.log(' ')
-                // }else{
-                //     await db.addToTable(person_byu_id,person_name,search,answer,'https://www.byu.edu/search-all?q='
-                //         +answer.replaceAll(' ','%20'))
-                // }
+                if(y.includes(answer)){
+                    console.clear()
+                    console.log('The data has already existed in the database. Please choose other job preference.')
+                    console.log(' ')
+                }else{
+                    await db.addToTable(studentId,studentName,jobCategory,answer,'https://www.byu.edu/search-all?q='
+                        +answer.replaceAll(' ','%20'))
+                }
             }).catch(console.error)
     }
+    return job_name
 }
 
-async function addJob(){
-    await showDepartment()
-    await showJobOpening()
-    await jobChoice()
-    await selectJob()
-    console.log(job_name)
+async function resetSelectJob(){
+    prompt = new Select({
+        name: 'jobPrefer',
+        message: 'Select the job you are interested in',
+        choices: []
+    })
 }
 
 //addJob()
-module.exports ={getStudentName, getStudentId}
+module.exports ={getStudentName, getStudentId, showDepartment, showJobOpening, jobChoice, selectJob ,resetSelectJob}
