@@ -77,11 +77,12 @@ async function showDepartment(){
         let body = await axios(jobOpeningApi)
         const job = body.data.sites
         console.log('Here are the departments at BYU:')
-        console.log('Enter the Side ID to see detail information ')
+        console.log('Enter the Side ID to see detail information or enter 0 to return to the menu')
         console.log(' ')
         for(let i=0; i<job.length; i++){
             console.log('Side ID: '+job[i].site_id +'-'+ job[i].site_description)
         }
+        console.log('Side ID: 0-Go back to the menu')
         side = await input('Enter the side ID to see the job opening: ')
         return side
 
@@ -102,11 +103,14 @@ async function showJobOpening(sideName){
             console.log(' ')
             side = null
         }else {
-            console.log('Here are the job category. Please enter the Title ID to see the job opening.')
+            console.log('Here are the job categories. Please enter the Title ID to see the job opening or enter 0 to go back to the previous page.')
             console.log(' ')
             for (let i = 0; i < jobList.length; i++) {
                 console.log('Title ID: ' + jobList[i].job_template_id + ' --' + jobList[i].job_title)
             }
+            console.log('Title ID: 0 --Go back to the previous page')
+            console.log('*** Enter nothing to return back to the menu ***')
+
         }
         if(side != null){
             title = await input('Enter the title ID: ')
@@ -144,6 +148,8 @@ async function jobChoice(sideId, titleId){
                     // console.log('Opening ID: ' +jobList[i].opening_id + ' --'+jobList[i].posting_title)
                     prompt.choices.push(jobList[i].posting_title)
                 }
+                prompt.choices.push('Go Back to The Previous Page')
+                prompt.choices.push('Go Back to The Menu Page')
             }
         }catch(e){
             console.clear()
@@ -165,7 +171,13 @@ async function selectJob(studentId, studentName, jobCategory){
                     console.clear()
                     console.log('The data has already existed in the database. Please choose other job preference.')
                     console.log(' ')
-                }else{
+                }
+                else if(answer === 'Go Back to The Previous Page'){
+                    job_name = 0
+                }else if(answer === 'Go Back to The Menu Page'){
+                    return 1
+                }
+                else{
                     await db.addToTable(studentId,studentName,jobCategory,answer,'https://www.byu.edu/search-all?q='
                         +answer.replaceAll(' ','%20'))
                 }
