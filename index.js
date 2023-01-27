@@ -98,14 +98,6 @@ async function addJob(){
         console.clear()
     }
     else{
-        // let titleId =await api.showJobOpening(sideId)
-        // if(titleId === '0'){
-        //     console.clear()
-        //     await addJob()
-        // }else{
-        //     let jobCategory =await api.jobChoice(sideId, titleId)
-        //     await api.selectJob(person_byu_id, person_name,jobCategory)
-        // }
         await addJobToDatabase(sideId)
     }
 
@@ -142,5 +134,4 @@ async function all(){
         await menu()
     }
 }
-
 all()

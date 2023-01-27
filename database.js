@@ -86,7 +86,7 @@ async function seeTable(byuId) {
         if(a.length === 0){
             console.log('You do not have any preferred job right now.')
         }else{
-            console.log('You can see more job opening details by click the job_link')
+            console.log('You can see more job opening details by searching the desired_job_name at: https://www.byu.edu/search-all?q=')
             console.log('or')
             console.log('Search enter job_category at BYU Job Board: https://hrms.byu.edu/psc/ps/PUBLIC/HRMS/c/HRS_HRAM.HRS_APP_SCHJOB.GBL?Page=HRS_APP_SCHJOB&Action=U&FOCUS=Employee&SiteId=60')
             console.log(' ')

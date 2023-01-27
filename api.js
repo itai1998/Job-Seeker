@@ -146,6 +146,7 @@ async function jobChoice(sideId, titleId){
             }else{
                 for(let i=0; i<jobList.length; i++){
                     // console.log('Opening ID: ' +jobList[i].opening_id + ' --'+jobList[i].posting_title)
+                    jobList[i].posting_title = jobList[i].posting_title.replaceAll('\'','\"')
                     prompt.choices.push(jobList[i].posting_title)
                 }
                 prompt.choices.push('Go Back to The Previous Page')
@@ -178,8 +179,11 @@ async function selectJob(studentId, studentName, jobCategory){
                     return 1
                 }
                 else{
-                    await db.addToTable(studentId,studentName,jobCategory,answer,'https://www.byu.edu/search-all?q='
-                        +answer.replaceAll(' ','%20'))
+                    let job = 'https://www.byu.edu/search-all?q=' +answer.replaceAll(' ','%20')
+                    if(job.length >= 90){
+                        job = 'https://www.byu.edu/search-all?q='
+                    }
+                    await db.addToTable(studentId,studentName,jobCategory,answer,job)
                 }
             }).catch(console.error)
     }
