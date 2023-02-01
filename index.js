@@ -1,6 +1,17 @@
-//Require postgres to connect the code to SQL
-const axios = require('axios')
-const { Client } = require('pg')
+/**
+ * BYU Job Seeker
+ * A program that allows students at BYU to store their desired jobs on campus by choosing the departments
+ * at BYU with the job categories
+ * @file index.js
+ * @description Control the flow of the program
+ * @author I-Tai Lin
+ * Last edited: January 27, 2023 -added jsdocs
+ */
+
+/**
+ * imports node packges qnquirer to prompt for use inputs
+ * imports input.js, database.js, and api.js
+ */
 const { Select, AutoComplete } = require('enquirer')
 const getInput = require('./input')
 const input = getInput.input
@@ -8,9 +19,17 @@ const db = require('./database')
 const api = require('./api')
 const {resetSelectJob} = require("./api");
 
+/**
+ * @global person_name - stores user's full name
+ * @global person_byu_id stores user's BYU ID
+ */
 let person_name, person_byu_id
 
-// get student's name and byu_id
+/**
+ * Ask the users to enter their BYU ID until they enter the valid ID. Then asks the users to verify their names
+ * Store the users' name and BYU ID into global variables
+ * @returns {Promise<void>}
+ */
 async function person(){
     while(true){
         person_byu_id = await api.getStudentId()
@@ -25,8 +44,10 @@ async function person(){
     }
 }
 
-// show the list of departments with its job opening name
-
+/**
+ * Displays main menu and navigates based on user's selection
+ * @returns {Promise<void>}
+ */
 async function menu(){
     await db.seeTable(person_byu_id)
     console.log(`Please select the action:`  )
@@ -72,6 +93,12 @@ async function menu(){
         })
 }
 
+/**
+ * Function to ba called if user selects 'Delete specific job' in menu()
+ * Display user's desired job list and prompts user to select
+ * The selected job will be removed from the list
+ * @returns {Promise<void>}
+ */
 async function removeJob(){
     const remove = await new AutoComplete({
         name: 'job delete',
@@ -88,10 +115,15 @@ async function removeJob(){
         console.clear()
         await console.log('Nothing to delete. Return to menu...')
         await console.log(' ')
-
     }
 }
 
+/**
+ * Function to be called if user selects 'Add preferred job' in menu()
+ * The user will be prompt to enter the department ID, job category ID, and to select the job they like
+ * @property sideId - department ID at BYU
+ * @returns {Promise<void>}
+ */
 async function addJob(){
     let sideId =await api.showDepartment()
     if(sideId === '0'){
@@ -103,6 +135,12 @@ async function addJob(){
 
 }
 
+/**
+ * Function to be called when the user enter the side Id into the program after they select 'Add preferred job' in menu()
+ * The program will show the job title of the department the user choose
+ * @param SideId - department ID at BYU
+ * @returns {Promise<void>}
+ */
 async function addJobToDatabase(SideId){
     let titleId =await api.showJobOpening(SideId)
     if(titleId === '0'){
@@ -118,12 +156,20 @@ async function addJobToDatabase(SideId){
     }
 }
 
+/**
+ * Function to be called and awaits user's selection to return to menu() or exit the program
+ * @returns {Promise<void>}
+ */
 async function returnToMenu(){
     console.log('Welcome back '+person_name)
     await api.resetSelectJob()
     await menu()
 }
 
+/**
+ * Control the flow of the program
+ * @returns {Promise<void>}
+ */
 async function all(){
     await db.testDatabaseConnectivity()
     console.log(' ')

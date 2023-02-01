@@ -1,2 +1,8 @@
-const token = 'IzH6e9b5BafcjhMWptOkAuVuvirsFADO_YKvrM45G08.KU4BijjWDF2U6cbgDg54NSRot2pyhbWIJD-oOIIY1ZA'
+/**
+ * @file token.js
+ * @description This file return the token
+ * @author I- Tai Lin
+ * Last edited: January, 31 - added jsdocs
+ */
+const token = 'hgh1SG1HsUyBYCj8DZAJCPt4gLkTcXYMwW2ts9iB-zo.MLNGlrJaaCmvxVWK4d4wC9WvfVtNapYtMXW43DM7emY'
 exports.token = token

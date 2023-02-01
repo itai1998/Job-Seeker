@@ -1,3 +1,10 @@
+/**
+ * @file AWS.js
+ * @description This file contains the functions that are used to connect to the AWS database
+ * @author I-Tai Lin
+ * Last edited: January, 31 - added jsdocs
+ */
+
 const AWS = require('aws-sdk')
 AWS.config.update({region: 'us-west-2'})
 const ssm = new AWS.SSM()

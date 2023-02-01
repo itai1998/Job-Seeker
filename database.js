@@ -1,8 +1,17 @@
+/**
+ * @file database.js
+ * @description handles all database operations
+ * @author I- Tai Lin
+ * Last edited: January, 31 - added jsdocs
+ */
+
+// variable setup to connect to dacker database
 const { Client } = require('pg')
-const a = require('./input')
-const input = a.input
+
+// variable setup to connect to AWS
 const {aws_name, aws_password} = require("./aws");
 
+// Dacker database parameters
 const params ={
     host: 'localhost',
     user: null,
@@ -11,7 +20,9 @@ const params ={
     port: 5432
 }
 
-// Test if the code connects to the database
+/**
+ * Check if user is connected to darker database with AWS parameters
+ */
 async function testDatabaseConnectivity (){
     try{
         params.user = await aws_name.then(i=>i.Value)
@@ -29,16 +40,23 @@ async function testDatabaseConnectivity (){
     }
 }
 
-// Add the data to the database
-async function addToTable (byu_id, name, job_category, desired_job_name,job_link){
+/**
+ * Add the job of user's choice into the preferred job table in dacker database
+ * @param byu_id user input BYU ID
+ * @param name user input name
+ * @param job_category user selection of job category
+ * @param desired_job_name user selection of job name
+ * @returns {Promise<void>}
+ */
+async function addToTable (byu_id, name, job_category, desired_job_name){
     try{
         params.user = await aws_name.then(i=>i.Value)
         params.password = await aws_password.then(i=>i.Value)
         console.log('Adding something to the table...')
         const client = new Client(params)
         await client.connect()
-        const queryText = 'INSERT INTO job (BYU_ID, NAME, JOB_CATEGORY, DESIRED_JOB_NAME, JOB_LINK) VALUES ($1, $2, $3, $4, $5)'
-        const values =[byu_id, name, job_category, desired_job_name, job_link]
+        const queryText = 'INSERT INTO job (BYU_ID, NAME, JOB_CATEGORY, DESIRED_JOB_NAME) VALUES ($1, $2, $3, $4)'
+        const values =[byu_id, name, job_category, desired_job_name]
         await client.query(queryText, values)
         await client.end()
         console.error('Successfully added a new item on the local database')
@@ -50,7 +68,10 @@ async function addToTable (byu_id, name, job_category, desired_job_name,job_link
     }
 }
 
-// create a new table (for testing right now)
+/**
+ * Creates table if it doesn't exist in the database
+ * @returns void
+ */
 async function createToTable(){
     try{
         params.user = await aws_name.then(i=>i.Value)
@@ -62,8 +83,8 @@ async function createToTable(){
             '(byu_id VARCHAR(9) NOT NULL,' +
             'name VARCHAR(50) NOT NULL,' +
             'job_category VARCHAR(100),' +
-            'desired_job_name VARCHAR(100) NOT NULL,' +
-            'job_link VARCHAR(500));'
+            'desired_job_name VARCHAR(100) NOT NULL);'
+            // 'job_link VARCHAR(500));'
         await client.query(queryText)
         await client.end()
         console.log('Successfully created table')
@@ -72,7 +93,12 @@ async function createToTable(){
     }
 }
 
-// show the table
+/**
+ * View all information results of user's preferred job based on BYU ID
+ * @param byuId user input BYU ID
+ * @returns fale if table is empty
+ * @returns a string if catches error
+ */
 async function seeTable(byuId) {
     try{
         params.user = await aws_name.then(i=>i.Value)
@@ -105,6 +131,12 @@ async function seeTable(byuId) {
     }
 }
 
+/**
+ * Deletes user's selected job from preferred job table in dacker database
+ * @param byu_id user input BYU ID
+ * @param jobs user selection of jobs
+ * @returns {Promise<void>}
+ */
 async function delete_db(byu_id, jobs){
     await testDatabaseConnectivity()
         try{
@@ -125,7 +157,11 @@ async function delete_db(byu_id, jobs){
 }
 
 
-// Delete all data of the student's job
+/**
+ * Remove all rows from user's preferred job table on BYU ID
+ * @param byuId user input BYU ID
+ * @returns {Promise<void>}
+ */
 async function deleteAll(byuId){
     try{
         params.user = await aws_name.then(i=>i.Value)
@@ -143,6 +179,11 @@ async function deleteAll(byuId){
     }
 }
 
+/**
+ * View all names of jobs in user's preferred job table
+ * @param byuid user input BYU ID
+ * @returns an array of jobs
+ */
 async function viewDesirejob(byuid) {
     let job
     try{

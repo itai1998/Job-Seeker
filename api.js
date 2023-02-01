@@ -1,3 +1,9 @@
+/**
+ * @file api.js
+ * @description This handle all the API calls
+ * @author I-Tai Lin
+ * Last edited: January, 31 - added jsdocs
+ */
 const axios = require('axios')
 const getInput = require('./input')
 const input = getInput.input
@@ -6,8 +12,10 @@ const {Select} = require("enquirer");
 const token = index.token
 const db = require('./database')
 
-
-
+/**
+ * @param JobOpeningApi to get all the department at BYU
+ * @param token will get the token from token.js
+ */
 const jobOpeningApi = {
     url: 'https://api-sandbox.byu.edu:443/domains/erp/hr/job_openings/v1/sites',
     method: 'GET',
@@ -16,16 +24,27 @@ const jobOpeningApi = {
     }
 }
 
+/**
+ * Prompts user to select the job
+ */
 let prompt = new Select({
     name: 'jobPrefer',
     message: 'Select the job you are interested in',
     choices: []
 })
 
-let person_name, person_byu_id
-let side, title, search
-let job_name
+/**
+ * @global person_byu_id - get the student's BYU ID
+ * @global side - get the department's side ID
+ * @global title - get the job's title ID
+ * @global job_name - get the job's category name
+ */
+let person_byu_id, side, title, job_name
 
+/**
+ * Prompts user to input BYU ID and assigns it to the global variable 'person_byu_id' in index.js
+ * @returns id
+ */
 async function getStudentId(){
         try{
             let id = await input('Enter you student ID: ')
@@ -46,6 +65,11 @@ async function getStudentId(){
         }
 }
 
+/**
+ * Ask the user to verify his or her name and assigns it to the global variable 'person_name' in index.js
+ * @param id
+ * @returns name
+ */
 async function getStudentName(id){
         try{
             const options ={
@@ -62,7 +86,6 @@ async function getStudentName(id){
             let question = await input(`Is ${name} your name? y or n >>> `)
             if(question==='y' || question ==='Y'){
                 console.clear()
-                person_name = name
                 return name;
             }
         } catch (e){
@@ -70,6 +93,10 @@ async function getStudentName(id){
         }
 }
 
+/**
+ * Calls job_openings v1 API and retrieves all departments at BYU
+ * @returns side id that the user enter
+ */
 async function showDepartment(){
     try{
         // get list of department
@@ -91,6 +118,11 @@ async function showDepartment(){
     }
 }
 
+/**
+ * Calls job_opening_v1_side API and retrieves all the job category according to the side ID
+ * @param sideName the side ID that the user enter
+ * @returns title
+ */
 async function showJobOpening(sideName){
     try{
         console.clear()
@@ -123,6 +155,13 @@ async function showJobOpening(sideName){
     }
 }
 
+/**
+ * Calls job_opening_v1_side_title API and retrieves all the job names according to the department side ID and the job title
+ * Push the job names into the {Select} enquirer
+ * @param sideId the department side ID that the user enter
+ * @param titleId the job title ID that the user enter
+ * @returns job_name
+ */
 async function jobChoice(sideId, titleId){
     if(side!=null && title!=null){
         try{
@@ -130,7 +169,7 @@ async function jobChoice(sideId, titleId){
             const jobTitle = body.data.job_families
             for (let i = 0; i < jobTitle.length; i++) {
                 if(Number(title) === jobTitle[i].job_template_id){
-                    search = jobTitle[i].job_title
+                    job_name= jobTitle[i].job_title
                     break
                 }
             }
@@ -158,10 +197,18 @@ async function jobChoice(sideId, titleId){
             console.log(' ')
         }
     }
-    return search
+    return job_name
 }
 
-async function selectJob(studentId, studentName, jobCategory){
+/**
+ * Add the student's ID, student's name, and his desired job into the database
+ * @param studentId user's BYU ID
+ * @param studentName user's name
+ * @param job user's desired job
+ * @returns {Promise<*>}
+ */
+async function selectJob(studentId, studentName, job){
+    let job_name
     if(prompt.choices.length!=0){
         let y = await db.viewDesirejob(person_byu_id)
         await console.clear()
@@ -179,17 +226,21 @@ async function selectJob(studentId, studentName, jobCategory){
                     return 1
                 }
                 else{
-                    let job = 'https://www.byu.edu/search-all?q=' +answer.replaceAll(' ','%20')
-                    if(job.length >= 90){
-                        job = 'https://www.byu.edu/search-all?q='
-                    }
-                    await db.addToTable(studentId,studentName,jobCategory,answer,job)
+                    // let job = 'https://www.byu.edu/search-all?q=' +answer.replaceAll(' ','%20')
+                    // if(job.length >= 90){
+                    //     job = 'https://www.byu.edu/search-all?q='
+                    // }
+                    await db.addToTable(studentId,studentName,job,answer)
                 }
             }).catch(console.error)
     }
     return job_name
 }
 
+/**
+ * Clear the {Select} enquirer's choices
+ * @returns {Promise<void>}
+ */
 async function resetSelectJob(){
     prompt = new Select({
         name: 'jobPrefer',
@@ -198,5 +249,4 @@ async function resetSelectJob(){
     })
 }
 
-//addJob()
 module.exports ={getStudentName, getStudentId, showDepartment, showJobOpening, jobChoice, selectJob ,resetSelectJob}
