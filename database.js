@@ -87,7 +87,7 @@ async function createToTable(){
             // 'job_link VARCHAR(500));'
         await client.query(queryText)
         await client.end()
-        console.log('Successfully created table')
+        //console.log('Successfully created table')
     } catch(e) {
         console.log(e)
     }
@@ -122,10 +122,10 @@ async function seeTable(byuId) {
         }
     } catch (e){
         if(e){
-            console.log(`Table doesn't exist yet. Creating table...`)
+            //console.log(`Table doesn't exist yet. Creating table...`)
             await createToTable()
         }
-        console.log('Successfully created table! Please go back to the main menu!')
+        //console.log('Successfully created table! Please go back to the main menu!')
         return false
 
     }
