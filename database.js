@@ -9,7 +9,10 @@
 const { Client } = require('pg')
 
 // variable setup to connect to AWS
-const {aws_name, aws_password} = require("./aws");
+//const {aws_name, aws_password} = require("./aws");
+
+// variable setup to connect to AWS
+const {getAWSLogins} = require('./aws.js')
 
 // Dacker database parameters
 const params ={
@@ -21,12 +24,25 @@ const params ={
 }
 
 /**
+ * Log in to the database by using the AWS parameters from AWS store
+ * @returns {Promise<void>}
+ */
+async function login(){
+    let AWSParams = await getAWSLogins()
+    params.user = AWSParams[0]
+    params.password = AWSParams[1]
+}
+
+/**
  * Check if user is connected to darker database with AWS parameters
  */
 async function testDatabaseConnectivity (){
     try{
-        params.user = await aws_name.then(i=>i.Value)
-        params.password = await aws_password.then(i=>i.Value)
+
+        await login()
+        // params.user = await aws_name.then(i=>i.Value)
+        // params.password = await aws_password.then(i=>i.Value)
+
         console.log('Testing connection to local database')
         const client = new Client(params)
         await client.connect()
@@ -50,8 +66,10 @@ async function testDatabaseConnectivity (){
  */
 async function addToTable (byu_id, name, job_category, desired_job_name){
     try{
-        params.user = await aws_name.then(i=>i.Value)
-        params.password = await aws_password.then(i=>i.Value)
+        await login()
+
+        // params.user = await aws_name.then(i=>i.Value)
+        // params.password = await aws_password.then(i=>i.Value)
         console.log('Adding something to the table...')
         const client = new Client(params)
         await client.connect()
@@ -74,8 +92,9 @@ async function addToTable (byu_id, name, job_category, desired_job_name){
  */
 async function createToTable(){
     try{
-        params.user = await aws_name.then(i=>i.Value)
-        params.password = await aws_password.then(i=>i.Value)
+        await login()
+        // params.user = await aws_name.then(i=>i.Value)
+        // params.password = await aws_password.then(i=>i.Value)
         const client = new Client(params)
         await client.connect()
         const queryText =
@@ -101,8 +120,9 @@ async function createToTable(){
  */
 async function seeTable(byuId) {
     try{
-        params.user = await aws_name.then(i=>i.Value)
-        params.password = await aws_password.then(i=>i.Value)
+        await login()
+        // params.user = await aws_name.then(i=>i.Value)
+        // params.password = await aws_password.then(i=>i.Value)
         const client = new Client(params)
         await client.connect()
         const queryText = `SELECT * FROM job WHERE byu_id = '${byuId}';`
@@ -138,10 +158,10 @@ async function seeTable(byuId) {
  * @returns {Promise<void>}
  */
 async function delete_db(byu_id, jobs){
-    await testDatabaseConnectivity()
         try{
-            params.user = await aws_name.then(i=>i.Value)
-            params.password = await aws_password.then(i=>i.Value)
+            await login()
+            // params.user = await aws_name.then(i=>i.Value)
+            // params.password = await aws_password.then(i=>i.Value)
             console.log('Deleting job from table...')
                 const client = new Client(params)
                 await client.connect()
@@ -164,8 +184,9 @@ async function delete_db(byu_id, jobs){
  */
 async function deleteAll(byuId){
     try{
-        params.user = await aws_name.then(i=>i.Value)
-        params.password = await aws_password.then(i=>i.Value)
+        await login()
+        // params.user = await aws_name.then(i=>i.Value)
+        // params.password = await aws_password.then(i=>i.Value)
         console.log('Deleting history...')
         const client = new Client(params)
         await client.connect()
@@ -187,8 +208,9 @@ async function deleteAll(byuId){
 async function viewDesirejob(byuid) {
     let job
     try{
-        params.user = await aws_name.then(i=>i.Value)
-        params.password = await aws_password.then(i=>i.Value)
+        await login()
+        // params.user = await aws_name.then(i=>i.Value)
+        // params.password = await aws_password.then(i=>i.Value)
         const client = new Client(params)
         await client.connect()
         const queryText = `SELECT desired_job_name FROM job WHERE byu_id = '${byuid}';`

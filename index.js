@@ -57,40 +57,47 @@ async function menu(){
         choices:['Add preferred job', 'Delete specific job', 'Delete all preferred jobs', 'Exit']
 
     })
-    await action.run()
-        .then(async answer => {
-            if (answer === 'Add preferred job') {
-                await addJob()
-                await returnToMenu()
-            } else if (answer === 'Delete specific job') {
-                await removeJob()
-                await console.clear()
-                await console.log('Successfully deleting the job...')
-                await console.log(' ')
-                await returnToMenu()
-            } else if (answer ==='Delete all preferred jobs') {
-                while(true){
-                let x = await input('Are you sure you want to delete all the desired jobs from the table? (y/n): ')
-                    if(x==='y' || x ==='Y' ){
-                        await db.deleteAll(person_byu_id)
-                        await console.clear()
-                        await console.log('Successful deleting all jobs preference...')
-                        await console.log(' ')
-                        break
-                    }else if(x==='n' || x === 'N'){
-                        await console.clear()
-                        await console.log('Cancel the action...')
-                        await console.log(' ')
-                        break
-                    }else{
-                        continue
+    try{
+        await action.run()
+            .then(async answer => {
+                if (answer === 'Add preferred job') {
+                    await addJob()
+                    await returnToMenu()
+                } else if (answer === 'Delete specific job') {
+                    await removeJob()
+                    await console.clear()
+                    await console.log('Successfully deleting the job...')
+                    await console.log(' ')
+                    await returnToMenu()
+                } else if (answer ==='Delete all preferred jobs') {
+                    while(true){
+                        let x = await input('Are you sure you want to delete all the desired jobs from the table? (y/n): ')
+                        if(x==='y' || x ==='Y' ){
+                            await db.deleteAll(person_byu_id)
+                            await console.clear()
+                            await console.log('Successful deleting all jobs preference...')
+                            await console.log(' ')
+                            break
+                        }else if(x==='n' || x === 'N'){
+                            await console.clear()
+                            await console.log('Cancel the action...')
+                            await console.log(' ')
+                            break
+                        }else{
+                            continue
+                        }
                     }
+                    await returnToMenu()
+                } else if(answer==='Exit'){
+                    console.log('Bye Bye')
+                    process.exit()
                 }
-                await returnToMenu()
-            } else if(answer==='Exit'){
-                console.log('Bye Bye')
-            }
-        })
+            })
+    }catch(e){
+        console.log('')
+    }
+
+
 }
 
 /**
