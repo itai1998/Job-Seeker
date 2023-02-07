@@ -34,6 +34,60 @@ let prompt = new Select({
 })
 
 /**
+ * Prompts user to select the department
+ */
+let departmentName = new Select({
+    name: 'department',
+    message: 'Please select the side ID and the department',
+    choices: []
+})
+
+/**
+ * Prompts user to select the job categories
+ */
+let jobCategories = new Select({
+    name: 'job category',
+    message: 'Please select the Title ID with its category name',
+    choices: []
+})
+
+/**
+ * Clear the {Select} enquirer's choices from selectJob
+ * @returns {Promise<void>}
+ */
+async function resetSelectJob(){
+    prompt = new Select({
+        name: 'jobPrefer',
+        message: 'Select the job you are interested in',
+        choices: []
+    })
+}
+
+/**
+ * Clear the {Select} enquirer's choices from departmentName
+ * @returns {Promise<void>}
+ */
+async function resetDepartmentName(){
+    departmentName = new Select({
+        name: 'department',
+        message: 'Please select the side ID and the department',
+        choices: []
+    })
+}
+
+/**
+ * Clear the {Select} enquirer's choices from jobCategories
+ * @returns {Promise<void>}
+ */
+async function resetJobCategories(){
+    jobCategories = new Select({
+        name: 'job category',
+        message: 'Please select the Title ID with its category name',
+        choices: []
+    })
+}
+
+/**
  * @global person_byu_id - get the student's BYU ID
  * @global side - get the department's side ID
  * @global title - get the job's title ID
@@ -95,8 +149,9 @@ async function getStudentName(id){
 
 /**
  * Calls job_openings v1 API and retrieves all departments at BYU
- * @returns side id that the user enter
+ * @returns side id that the user select
  */
+
 async function showDepartment(){
     try{
         // get list of department
@@ -107,21 +162,27 @@ async function showDepartment(){
         console.log('Enter the Side ID to see detail information or enter 0 to return to the menu')
         console.log(' ')
         for(let i=0; i<job.length; i++){
-            console.log('Side ID: '+job[i].site_id +'-'+ job[i].site_description)
+            //console.log('Side ID: '+job[i].site_id +'-'+ job[i].site_description)
+            departmentName.choices.push(job[i].site_id +'-'+ job[i].site_description)
         }
-        console.log('Side ID: 0-Go back to the menu')
-        side = await input('Enter the side ID to see the job opening: ')
-        return side
+        departmentName.choices.push('0-Go back to the menu')
+
+        await departmentName.run()
+            .then(answer => answer= answer.split('-'))
+            .then(answer=>side = answer[0])
+            .catch(console.error())
 
     } catch(e){
         console.log('An error occured in printing job opening API')
     }
+    await resetDepartmentName()
+    return side
 }
 
 /**
  * Calls job_opening_v1_side API and retrieves all the job category according to the side ID
- * @param sideName the side ID that the user enter
- * @returns title
+ * @param sideName the side ID that the user select
+ * @returns title the title ID of that job category
  */
 async function showJobOpening(sideName){
     try{
@@ -138,21 +199,27 @@ async function showJobOpening(sideName){
             console.log('Here are the job categories. Please enter the Title ID to see the job opening or enter 0 to go back to the previous page.')
             console.log(' ')
             for (let i = 0; i < jobList.length; i++) {
-                console.log('Title ID: ' + jobList[i].job_template_id + ' --' + jobList[i].job_title)
+                //console.log('Title ID: ' + jobList[i].job_template_id + ' --' + jobList[i].job_title)
+                jobCategories.choices.push(jobList[i].job_template_id+'-'+jobList[i].job_title)
             }
-            console.log('Title ID: 0 --Go back to the previous page')
-            console.log('*** Enter nothing to return back to the menu ***')
+            jobCategories.choices.push('0-Go back to the previous page')
+            jobCategories.choices.push('Go back to the menu')
+            //console.log('*** Enter nothing to return back to the menu ***')
 
         }
         if(side != null){
-            title = await input('Enter the title ID: ')
-            return title
+            await jobCategories.run()
+                .then(answer => answer= answer.split('-'))
+                .then(answer => title =answer[0])
+                .catch(console.error)
         } else{
             title = null
         }
     }catch(e){
         console.error('You do not enter the Side ID! Return to the menu...')
     }
+    await resetJobCategories()
+    return title
 }
 
 /**
@@ -237,16 +304,4 @@ async function selectJob(studentId, studentName, job){
     return job_name
 }
 
-/**
- * Clear the {Select} enquirer's choices
- * @returns {Promise<void>}
- */
-async function resetSelectJob(){
-    prompt = new Select({
-        name: 'jobPrefer',
-        message: 'Select the job you are interested in',
-        choices: []
-    })
-}
-
-module.exports ={getStudentName, getStudentId, showDepartment, showJobOpening, jobChoice, selectJob ,resetSelectJob}
+module.exports ={getStudentName, getStudentId, jobChoice, selectJob ,resetSelectJob, showDepartment,showJobOpening}
