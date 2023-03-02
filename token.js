@@ -4,5 +4,5 @@
  * @author I- Tai Lin
  * Last edited: January, 31 - added jsdocs
  */
-const token = 'xDFe5G0OuRfo-AQjPMaSFsTwMOYchMYCE96VrW4Ash8.M664pb56kxdP1o4KgaBmCgMp-ovLM_UqUEgt9n6Euaw'
+const token = 'jujUt8HcaIzyJ2_dxnBEThJVF5OYNo9DUb8xu8Bbhlw.zHkYNurH08J8zS7SR9pDkqYt08u1durNdiVajEgzmDA'
 exports.token = token

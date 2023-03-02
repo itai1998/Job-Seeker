@@ -19,6 +19,8 @@ const db = require('./database')
 const api = require('./api')
 const {resetSelectJob} = require("./api");
 
+// commit test
+
 /**
  * @global person_name - stores user's full name
  * @global person_byu_id stores user's BYU ID
