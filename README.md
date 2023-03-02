@@ -64,13 +64,13 @@ The user can select what actions they want to take from the four options below:
 ![1](https://user-images.githubusercontent.com/107719287/211644477-05cf0602-f39c-4f23-8e88-415ebc4b148e.png)
 
 ### 1. Add preferred job
-If the user select "Add preferred job", the program will list the departments from BYU with their Site ID and prompt the user to choose which deparment they are interested in by entering the Side ID. 
+If the user selects "Add preferred job", the program will list the departments from BYU with their Site ID and prompt the user to select which deparment they are interested in. 
 
-![1](https://user-images.githubusercontent.com/107719287/211649644-4ee5719e-b795-4f96-8c9c-a98f372488b0.png)
+![1](https://user-images.githubusercontent.com/107719287/217347793-fc9e92b3-2726-425b-bfdd-0ef2e87b50dc.PNG)
 
-After entering the Side ID, the category with their Title ID of that department will be listed. Again, the user can tell the program which category they are interested in by entering the Title ID.
+After selecting the department with its side ID, the program will then list the job category with its title ID of the department that the user choose. Again, the user can tell the program which category they are interested in by selecing the category name with its title ID.
 
-![1](https://user-images.githubusercontent.com/107719287/211652486-7205421e-d35f-4309-b416-cc06c996bc50.png)
+![1](https://user-images.githubusercontent.com/107719287/217348447-728ef0dd-ab3f-40b6-8a0f-8aaba72845b7.PNG)
 
 The program will show all the job openings according to the user's chosen category. The user can select the job they want by selecting the job title.
 
@@ -78,26 +78,26 @@ The program will show all the job openings according to the user's chosen catego
 
 The selected job will be saved in the table, and the program will return to the menu. 
 
-![1](https://user-images.githubusercontent.com/107719287/211656836-a0468184-8884-46ae-a6b5-050443740c1f.png)
+![1](https://user-images.githubusercontent.com/107719287/217348927-f27e4db5-2586-42a0-877c-b45945526ce1.PNG)
 
 ### 2. Delete specific job
 The option "Delete specific job" allows the users to remove the job they choose from the table. The job title will be listed, so the users can select the job title to remove the job.
 
-![1](https://user-images.githubusercontent.com/107719287/211901877-a067b430-8f28-437b-9118-8f4e6f612c29.png)
+![1](https://user-images.githubusercontent.com/107719287/217349685-6d12c582-64fe-41e6-8807-5ac9a564f158.PNG)
 
 The program will show a message "Successfully deleting the job..." after the user selects the job title. The program will then return to the menu, and the selected job will be removed from the table.
 
-![1](https://user-images.githubusercontent.com/107719287/211902046-c992aebd-22a1-42ae-a2d5-eb8bb742f9e3.png)
+![2](https://user-images.githubusercontent.com/107719287/217349697-26f01cdf-8b07-4312-9f4d-4ac454e166b9.PNG)
 
 ### 3.  Delete all preferred jobs
 "Delete all preferred jobs" will remove all the preferred jobs that the user selects from the table.
 The program will ask the user if they are sure to remove all the selected jobs or not. 
 
-![1](https://user-images.githubusercontent.com/107719287/211903632-4690459f-54ae-4d20-9f7b-23962bcb1c47.png)
+![1](https://user-images.githubusercontent.com/107719287/217350062-36250ee0-9902-423a-9b6a-11c951f7ab32.PNG)
 
 If the user enters "n", the program will return back to the menu and not remove the jobs. But if the user enters "y", the program will remove all the jobs from the table and return to the menu.
 
-![1](https://user-images.githubusercontent.com/107719287/211905456-b37fcc9d-a732-4937-b042-e70873f54e20.png)
+![2](https://user-images.githubusercontent.com/107719287/217350069-8f65f313-947d-4d20-a4c6-b461be1c8cc2.PNG)
 
 ### 4. Exit
 The "Exit" option will let the users leave the program
